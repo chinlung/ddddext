@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>
+            DDDDEXT
+        </title>
+        <meta charset="utf-8"/>
+        <link href="dist/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+        <script src="dist/bootstrap/bootstrap.min.js">
+        </script>
+        <script src="dist/jquery.min.js">
+        </script>
+        <link href="css/settings.css" rel="stylesheet" type="text/css"/>
+        <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+            <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+                <link href="/favicon.ico" rel="icon">
+                </link>
+            </link>
+        </link>
+    </head>
+    <body>
+        <div id="message">
+        </div>
+        <h2>
+            DDDDEXT - 設定介面
+        </h2>
+        <div class="row g-3">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="readme-tab-pane" aria-selected="true" class="nav-link active" data-bs-target="#readme-tab-pane" data-bs-toggle="tab" id="readme-tab" role="tab" type="button">
+                        使用需知
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="home-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#home-tab-pane" data-bs-toggle="tab" id="home-tab" role="tab" type="button">
+                        偏好設定
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="autofill-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#autofill-tab-pane" data-bs-toggle="tab" id="autofill-tab" role="tab" type="button">
+                        自動填表單
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <!-- tab 1 -->
+                <div aria-labelledby="readme-tab" class="tab-pane fade show active" id="readme-tab-pane" role="tabpanel" tabindex="0">
+                    <p>
+                        DDDDEXT 網頁驗證碼自動輸入機器人。
+                    </p>
+                    <p>
+                        爬山想搶山屋/搶信用卡活動的登錄/掛號...都需要輸入驗證碼，透過 ddddocr 可以自動識別文字驗證碼。
+                    </p>
+                    <p>
+                        售票系統的「驗證碼」機制會讓一般不會寫程式的民眾更難公平地購買到預期的門票。
+                    </p>
+                    <p>
+                        DDDDEXT 系統裡出現的「搶票」指的是「非台灣的藝文活動或車票」。
+                    </p>
+                    <div class="bd-callout bd-callout-info">
+                        台灣藝文活動的
+                        <strong>
+                            文創法第十條
+                        </strong>
+                        中的「
+                        <code>
+                            不正方式
+                        </code>
+                        」由於沒有明確定義，代表的是所有軟體都涉嫌違反。故在此呼籲大家，勿以身試法。
+                    </div>
+                    <hr/>
+                    <h3>
+                        法律聲明
+                    </h3>
+                    <p>
+                        使用此儲存庫或與之相關的任何程式碼，即表示您同意
+                        <a href="https://github.com/max32002/ddddext/blob/master/LEGAL_NOTICE.md" target="_blank">
+                            法律聲明
+                        </a>
+                        。作者不對該儲存庫的使用負責與背書，也不對其他使用者所做的任何副本、分叉、重新上傳或與 DDDDEXT 相關的任何其他內容負責。 這是作者唯一的帳戶和儲存庫。 為了防止假冒或不負責任的行為，請遵守此儲存庫使用的 GNU GPL 授權。
+                    </p>
+                    <div class="bd-callout bd-callout-info">
+                        作者沒有意圖要他人購得的票券進行加價轉售或是使用在違法的事情上，他人的行為並不在作者的意識支配範圍之內，作者不對他人的非法行為負責。
+                    </div>
+                </div>
+                <!-- tab 2 -->
+                <div aria-labelledby="home-tab" class="tab-pane fade" id="home-tab-pane" role="tabpanel" tabindex="0">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label" for="homepage">
+                            自動開啟的網址
+                        </label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="homepage" value=""/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label" for="window_size">
+                            瀏覽器視窗大小
+                        </label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="window_size" value=""/>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label" for="remote_url">
+                            OCR Server URL
+                        </label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="remote_url" value=""/>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label form-check-label" for="ocr_captcha_use_public_server">
+                            MaxBot Public OCR Server
+                        </label>
+                        <div class="col-sm-10">
+                            <input class="form-check-input" id="ocr_captcha_use_public_server" type="checkbox"/>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    #
+                                </th>
+                                <th scope="col">
+                                    驗證碼網址關鍵字
+                                </th>
+                                <th scope="col">
+                                    驗證碼圖片 selector
+                                </th>
+                                <th scope="col">
+                                    輸入欄位 selector
+                                </th>
+                                <th scope="col">
+                                    驗證碼字元數
+                                </th>
+                                <th scope="col">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="captcha-container">
+                            <tr id="captcha-actionbar">
+                                <td colspan="5">
+                                </td>
+                                <td>
+                                    <button class="btn btn-success" onclick="captcha_new();" type="button">
+                                        增加
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- tab 3 -->
+                <div aria-labelledby="autofill-tab" class="tab-pane fade" id="autofill-tab-pane" role="tabpanel" tabindex="2">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    #
+                                </th>
+                                <th scope="col">
+                                    自動輸入網址關鍵字
+                                </th>
+                                <th scope="col">
+                                    自動輸入欄位selector
+                                </th>
+                                <th scope="col">
+                                    自動輸入欄位填入值
+                                </th>
+                                <th scope="col">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="autofill-container">
+                            <tr id="autofill-actionbar">
+                                <td colspan="4">
+                                </td>
+                                <td>
+                                    <button class="btn btn-success" onclick="autofill_new();" type="button">
+                                        增加
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" id="run_btn">
+                    搶票
+                </button>
+                <button class="btn btn-primary" id="save_btn">
+                    存檔
+                </button>
+                <button class="btn btn-primary" id="reset_btn">
+                    重設為預設值
+                </button>
+                <button class="btn btn-danger" id="exit_btn">
+                    結束
+                </button>
+            </div>
+        </div>
+        <script src="settings.js">
+        </script>
+    </body>
+    <div class="modal" id="message_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="message_modal_title">
+                        MaxBot
+                    </h2>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="message_detail">
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">
+                        關閉
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="disappear">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        #
+                    </th>
+                    <th scope="col">
+                        網址關鍵字
+                    </th>
+                    <th scope="col">
+                        欄位selector
+                    </th>
+                    <th scope="col">
+                        欄位填入值
+                    </th>
+                    <th scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="autofill-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="autofill_url_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-control" id="autofill_selector_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-control" id="autofill_value_@node@" value=""/>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="autofill_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        #
+                    </th>
+                    <th scope="col">
+                        網址關鍵字
+                    </th>
+                    <th scope="col">
+                        captcha selector
+                    </th>
+                    <th scope="col">
+                        input selector
+                    </th>
+                    <th scope="col">
+                        captcha length
+                    </th>
+                    <th scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="captcha-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="captcha_url_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-control" id="captcha_selector_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-control" id="input_selector_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-control" id="maxlength_@node@" value="4"/>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</html>
