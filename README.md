@@ -16,8 +16,8 @@
 https://github.com/max32002/ddddext/releases
 
 下載說明:
-* 目前有打包的「執行檔」，只有Windows 平台，其他作業系統需要使用原始碼來執行。當然Windows 平台也可以用原始碼執行MaxBot.
-* 如果你是要用「原始碼」執行MaxBot, 在透過git clone 或在github按下載原始碼的 zip檔，你的python 版本可以使用3.7 / 3.8 / 3.9 / 3.10 這4個版號。
+* 目前有打包的「執行檔」，只有Windows 平台，其他作業系統需要使用原始碼來執行。當然Windows 平台也可以用原始碼執行 DDDDEXT.
+* 如果你是要用「原始碼」執行 DDDDEXT, 在透過git clone 或在github按下載原始碼的 zip檔，你的python 版本可以使用3.7 / 3.8 / 3.9 / 3.10 這4個版號。
 
 # Demo 
 (示範影片)
@@ -37,12 +37,7 @@ DDDDEXT 可以不安裝就在各個平台的 chrome 瀏覽器上執行，使用�
 透過原始碼執行ddddext教學影片：
 https://youtu.be/HpVG91j0lbI
 
-使用原始碼的解法，第一步是先取得原始碼後，開啟 Terminal 視窗來下指令，應該是4行指令就可以了。
-
-請參看看文章: 如何用虛擬主機搶拓元的門票，這篇文章是以虛擬主機來示範，在 Windows / macOS / Linux 平台裡的 python 操作方式幾乎相同。
-
-詳細的文字說明: 
-https://max-everyday.com/2023/11/buy-ticket-by-vm/
+使用原始碼的解法，第一步是先取得原始碼後，開啟 Terminal(終端機) 視窗來下指令，應該是4行指令就可以了。
 
 ### Step 1: 取得source code:
 
@@ -74,6 +69,12 @@ A: 執行 git clone 2次, 重覆取得 source code, 才會有這個問題, 如�
 
 PS:
 * 請先確定你的python 執行環境下已安裝 nodriver 及相關的套件，請參考 requirement.txt 檔案內容。
+
+# File Description
+(檔案說明)
+* nodriver_ddddext.py : 使用的元件是nodriver，用來把擴充功能放進瀏覽器。
+* start.py : 編輯 settings.json 的 GUI 介面。提供圖片OCR功能給chrome擴充功能。
+
 
 # Extension Privacy 
 
