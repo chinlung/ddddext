@@ -5,11 +5,16 @@ const save_button = document.querySelector('#save_btn');
 const reset_button = document.querySelector('#reset_btn');
 const exit_button = document.querySelector('#exit_btn');
 
+const new_captcha_button = document.querySelector('#new_captcha_btn');
+const new_autofill_button = document.querySelector('#new_autofill_btn');
+
 // preference
 const homepage = document.querySelector('#homepage');
 
 // advance
 const window_size = document.querySelector('#window_size');
+const checkall_keyword = document.querySelector('#checkall_keyword');
+
 
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
 const remote_url = document.querySelector('#remote_url');
@@ -35,6 +40,11 @@ function load_settins_to_form(settings)
             remote_url_string = remote_url_array[0];
         }
         remote_url.value = remote_url_string;
+
+        checkall_keyword.value = settings.advanced.checkall_keyword;
+        if(checkall_keyword.value=='""') {
+            checkall_keyword.value='';
+        }
 
         if(settings.ocr_captcha.captcha.length) {
             settings.ocr_captcha.captcha.forEach((d)=> {
@@ -225,6 +235,12 @@ function save_changes_to_dict(silent_flag)
         
         settings.advanced.remote_url = remote_url_string;
 
+        let checkall_keyword_string = checkall_keyword.value;
+        if(checkall_keyword_string.indexOf('"')==-1) {
+            checkall_keyword_string = '"' + checkall_keyword_string + '"';
+        }
+        settings.advanced.checkall_keyword = checkall_keyword_string;
+
         settings.ocr_captcha.captcha = get_captcha_array();
         settings.autofill = get_autofill_array();
 
@@ -315,6 +331,9 @@ save_button.addEventListener('click', maxbot_save);
 reset_button.addEventListener('click', maxbot_reset_api);
 exit_button.addEventListener('click', maxbot_shutdown_api);
 
+new_captcha_button.addEventListener('click', captcha_new);
+new_autofill_button.addEventListener('click', autofill_new);
+
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
 
 const onchange_tag_list = ["input","select","textarea"];
@@ -345,16 +364,18 @@ function captcha_new_with_value(item)
         node=parseInt(last_node)+1;
     }
     let html = $("#captcha-template").html();
-    html=html.replace(/@node@/g,""+node);
-    //console.log(html);
-    $("#captcha-container").append(html);
-    $("#captcha-actionbar").insertAfter($("#captcha-container tr").last());
+    if(html) {
+        html=html.replace(/@node@/g,""+node);
+        //console.log(html);
+        $("#captcha-container").append(html);
+        $("#captcha-actionbar").insertAfter($("#captcha-container tr").last());
 
-    if(item) {
-        $("#captcha_url_"+node).val(item["url"]);
-        $("#captcha_selector_"+node).val(item["captcha"]);
-        $("#input_selector_"+node).val(item["input"]);
-        $("#maxlength_"+node).val(item["maxlength"]);
+        if(item) {
+            $("#captcha_url_"+node).val(item["url"]);
+            $("#captcha_selector_"+node).val(item["captcha"]);
+            $("#input_selector_"+node).val(item["input"]);
+            $("#maxlength_"+node).val(item["maxlength"]);
+        }
     }
 }
 

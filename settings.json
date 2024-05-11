@@ -17,6 +17,7 @@
     "advanced": {
         "chrome_extension": true,
         "window_size": "480,1024",
+        "checkall_keyword": "\"\"",
         "remote_url": "\"http://127.0.0.1:16888/\""
     },
     "autofill": [

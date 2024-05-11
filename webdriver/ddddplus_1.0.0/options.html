@@ -80,6 +80,19 @@
                 <!-- tab 2 -->
                 <div aria-labelledby="home-tab" class="tab-pane fade" id="home-tab-pane" role="tabpanel" tabindex="0">
                     <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label form-check-label" for="checkall_keyword">
+                            自動打勾✅的網址關鍵字
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="checkall_keyword" rows="3"></textarea>
+                            <div class="bd-callout bd-callout-info">
+                              <strong>提示：</strong> 
+                                每組關鍵字需要用「<code>雙引號</code>」包起來, 用「<code>逗號</code>」分隔。關鍵字設太短，容易造成更多困擾，因為會被自動打勾。
+                            </div>            
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row mb-3">
                         <label class="col-sm-2 col-form-label" for="remote_url">
                             OCR Server URL
                         </label>
@@ -122,7 +135,7 @@
                                 <td colspan="5">
                                 </td>
                                 <td>
-                                    <button class="btn btn-success" onclick="captcha_new();" type="button">
+                                    <button class="btn btn-success" id="new_captcha_btn" type="button">
                                         增加
                                     </button>
                                 </td>
@@ -156,7 +169,7 @@
                                 <td colspan="4">
                                 </td>
                                 <td>
-                                    <button class="btn btn-success" onclick="autofill_new();" type="button">
+                                    <button class="btn btn-success" id="new_autofill_btn" type="button">
                                         增加
                                     </button>
                                 </td>

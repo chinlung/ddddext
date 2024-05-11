@@ -99,19 +99,23 @@ function ocr_main(settings) {
 
         if(settings.ocr_captcha.captcha.length) {
             settings.ocr_captcha.captcha.forEach((d)=> {
+                //console.log(d);
                 let is_match_url = false;
-                if(d.url=="") {
-                    is_match_url = true;
-                } else {
-                    if(document.location.href.indexOf(d.url) > -1) {
+                if(d.enable) {
+                    if(d.url=="") {
                         is_match_url = true;
+                    } else {
+                        if(document.location.href.indexOf(d.url) > -1) {
+                            is_match_url = true;
+                        }
                     }
                 }
-                if(d.maxlength.length > 0) {
-                    target_captcha_length = parseInt(d.maxlength);
-                }
                 //console.log(is_match_url);
-                if(is_match_url) {
+                if(is_match_url && d.captcha.length  && d.input.length) {
+                    if(d.maxlength.length > 0) {
+                        target_captcha_length = parseInt(d.maxlength);
+                    }
+
                     target_captcha_selector = d.captcha;
                     target_input_selector = d.input;
                     const current_inputed_value = $(target_input_selector).val();
@@ -124,6 +128,59 @@ function ocr_main(settings) {
                     }
                 }
             });
+        }
+
+        if(settings.autofill.length) {
+            settings.autofill.forEach((d)=> {
+                //console.log(d);
+                let is_match_url = false;
+                if(d.enable) {
+                    if(d.url=="") {
+                        is_match_url = true;
+                    } else {
+                        if(document.location.href.indexOf(d.url) > -1) {
+                            is_match_url = true;
+                        }
+                    }
+                }
+                //console.log(is_match_url);
+                if(is_match_url && d.selector.length  && d.value.length) {
+                    $(d.selector).val(d.value);
+                }
+            });
+        }        
+    }
+}
+
+function checkall()
+{
+    $('input[type=checkbox]:not(:checked)').each(function() {
+        $(this).click();
+    });
+}
+
+function checkall_main(settings)
+{
+    if(settings) {
+        console.log(settings.advanced.checkall_keyword);
+        let checkall_keyword_array = [];
+        if(settings) {
+            if(settings.advanced.checkall_keyword.length > 0) {
+                if(settings.advanced.checkall_keyword!='""') {
+                    checkall_keyword_array = JSON.parse('[' + settings.advanced.checkall_keyword +']');
+                }
+            }
+        }
+        console.log(checkall_keyword_array);
+        for (let i = 0; i < checkall_keyword_array.length; i++) {
+            let is_match_url = false;
+            if(document.location.href.indexOf(checkall_keyword_array[i]) > -1) {
+                is_match_url = true;
+            }
+            console.log(is_match_url);
+            if(is_match_url) {
+                checkall();
+            }
         }
     }
 }
@@ -142,6 +199,7 @@ storage.get('status', function (items)
     {
         inputInterval= setInterval(() => {
             ocr_main(settings);
+            checkall_main(settings);
         }, 200);
     } else {
         //console.log('maxbot status is not ON');

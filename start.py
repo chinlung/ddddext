@@ -39,7 +39,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.15)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.16)"
 
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 
@@ -64,6 +64,7 @@ def get_default_config():
 
     config_dict["advanced"]["chrome_extension"] = True
     config_dict["advanced"]["window_size"] = "480,1024"
+    config_dict["advanced"]["checkall_keyword"] = ""
 
     # remote_url not under ocr, due to not only support ocr features.
     config_dict["advanced"]["remote_url"] = "\"http://127.0.0.1:%d/\"" % (CONST_SERVER_PORT)
@@ -287,6 +288,9 @@ if __name__ == "__main__":
     
     threading.Thread(target=web_server, daemon=True).start()
     
+    print("maxbot app version:", CONST_APP_VERSION)
+    print("python version:", platform.python_version())
+    print("platform:", platform.platform())
     print("To exit web server press Ctrl + C.")
     while True:
         time.sleep(0.4)

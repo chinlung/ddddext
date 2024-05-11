@@ -1,9 +1,13 @@
 const storage = chrome.storage.local;
 
 const save_button = document.querySelector('#save_btn');
+const new_captcha_button = document.querySelector('#new_captcha_btn');
+const new_autofill_button = document.querySelector('#new_autofill_btn');
+
 
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
 const remote_url = document.querySelector('#remote_url');
+const checkall_keyword = document.querySelector('#checkall_keyword');
 
 const PUBLIC_SERVER_URL = "http://maxbot.dropboxlike.com:16888/";
 
@@ -12,6 +16,8 @@ var settings = null;
 loadChanges();
 
 save_button.addEventListener('click', saveChanges);
+new_captcha_button.addEventListener('click', captcha_new);
+new_autofill_button.addEventListener('click', autofill_new);
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
 
 function get_autofill_array()
@@ -63,11 +69,6 @@ async function saveChanges()
 
     if(settings) {
 
-        // preference
-        settings.homepage = homepage.value;
-        // advanced
-        settings.advanced.window_size = window_size.value;
-
         let remote_url_array = [];
         remote_url_array.push(remote_url.value);
         let remote_url_string = JSON.stringify(remote_url_array);
@@ -77,8 +78,20 @@ async function saveChanges()
         
         settings.advanced.remote_url = remote_url_string;
 
+        let checkall_keyword_string = checkall_keyword.value;
+        if(checkall_keyword_string.indexOf('"')==-1) {
+            checkall_keyword_string = '"' + checkall_keyword_string + '"';
+        }
+        settings.advanced.checkall_keyword = checkall_keyword_string;
+
         settings.ocr_captcha.captcha = get_captcha_array();
         settings.autofill = get_autofill_array();
+
+        await storage.set(
+        {
+            settings: settings
+        }
+        );
 
     }
     if(!silent_flag) {
@@ -105,6 +118,11 @@ function loadChanges()
                 remote_url_string = remote_url_array[0];
             }
             remote_url.value = remote_url_string;
+
+            checkall_keyword.value = settings.advanced.checkall_keyword;
+            if(checkall_keyword.value=='""') {
+                checkall_keyword.value='';
+            }
 
             if(settings.ocr_captcha.captcha.length) {
                 settings.ocr_captcha.captcha.forEach((d)=> {
@@ -170,16 +188,18 @@ function captcha_new_with_value(item)
         node=parseInt(last_node)+1;
     }
     let html = $("#captcha-template").html();
-    html=html.replace(/@node@/g,""+node);
-    //console.log(html);
-    $("#captcha-container").append(html);
-    $("#captcha-actionbar").insertAfter($("#captcha-container tr").last());
+    if(html) {
+        html=html.replace(/@node@/g,""+node);
+        //console.log(html);
+        $("#captcha-container").append(html);
+        $("#captcha-actionbar").insertAfter($("#captcha-container tr").last());
 
-    if(item) {
-        $("#captcha_url_"+node).val(item["url"]);
-        $("#captcha_selector_"+node).val(item["captcha"]);
-        $("#input_selector_"+node).val(item["input"]);
-        $("#maxlength_"+node).val(item["maxlength"]);
+        if(item) {
+            $("#captcha_url_"+node).val(item["url"]);
+            $("#captcha_selector_"+node).val(item["captcha"]);
+            $("#input_selector_"+node).val(item["input"]);
+            $("#maxlength_"+node).val(item["maxlength"]);
+        }
     }
 }
 
