@@ -22,7 +22,8 @@ https://github.com/max32002/ddddext/releases
 # Demo 
 (示範影片)
 
-https://youtu.be/wZy4BQ-z-S4
+* DDDDEXT 使用教學 https://youtu.be/wZy4BQ-z-S4
+* DDDDEXT 自動打勾+輸入欄位內容 https://youtu.be/98YikOWDLjo
 
 # How to Use 
 (使用教學)
