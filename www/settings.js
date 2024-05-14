@@ -7,6 +7,7 @@ const exit_button = document.querySelector('#exit_btn');
 
 const new_captcha_button = document.querySelector('#new_captcha_btn');
 const new_autofill_button = document.querySelector('#new_autofill_btn');
+const new_autocheck_button = document.querySelector('#new_autocheck_btn');
 
 // preference
 const homepage = document.querySelector('#homepage');
@@ -58,8 +59,15 @@ function load_settins_to_form(settings)
             });
         }
 
+        if(settings.autocheck.length) {
+            settings.autocheck.forEach((d)=> {
+                autocheck_new_with_value(d);
+            });
+        }
+
         initai_captcha();
         initai_autofill();
+        initai_autocheck();
     } else {
         console.log('no settings found');
     }
@@ -89,6 +97,7 @@ function maxbot_reset_api()
 {
     captcha_reset();
     autofill_reset();
+    autocheck_reset();
 
     let api_url = "http://127.0.0.1:16888/reset";
     $.get( api_url, function() {
@@ -195,6 +204,27 @@ function get_autofill_array()
     return autofill;
 }
 
+function get_autocheck_array()
+{
+    let autocheck = [];
+    let last_node = $("#autocheck-container tr[data-index]").last().attr("data-index");
+    let node=0;
+    if(last_node) {
+        node=parseInt(last_node);
+    }
+    if(node>0){
+        for(let i=1; i<=node; i++) {
+            let item={};
+            item["enable"]=true;
+            item["url"]=$("#autocheck_url_" + i).val();
+            item["selector"]=$("#autocheck_selector_" + i).val();
+            item["value"]=$("#autocheck_value_" + i).prop("checked");
+            autocheck.push(item);
+        }
+    }
+    return autocheck;
+}
+
 function get_captcha_array()
 {
     let captcha = [];
@@ -232,7 +262,7 @@ function save_changes_to_dict(silent_flag)
         remote_url_string = remote_url_string.substring(0,remote_url_string.length-1);
         remote_url_string = remote_url_string.substring(1);
         //console.log("final remote_url_string:"+remote_url_string);
-        
+
         settings.advanced.remote_url = remote_url_string;
 
         let checkall_keyword_string = checkall_keyword.value;
@@ -243,6 +273,7 @@ function save_changes_to_dict(silent_flag)
 
         settings.ocr_captcha.captcha = get_captcha_array();
         settings.autofill = get_autofill_array();
+        settings.autocheck = get_autocheck_array();
 
     }
     if(!silent_flag) {
@@ -301,9 +332,9 @@ function check_unsaved_fields()
             //console.log(field.value);
             //console.log(formated_saved_value);
             if(typeof formated_saved_value == "string") {
-                if(formated_input=='') 
+                if(formated_input=='')
                     formated_input='""';
-                if(formated_saved_value=='') 
+                if(formated_saved_value=='')
                     formated_saved_value='""';
                 if(formated_saved_value.indexOf('"') > -1) {
                     if(formated_input.length) {
@@ -333,6 +364,7 @@ exit_button.addEventListener('click', maxbot_shutdown_api);
 
 new_captcha_button.addEventListener('click', captcha_new);
 new_autofill_button.addEventListener('click', autofill_new);
+new_autocheck_button.addEventListener('click', autocheck_new);
 
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
 
@@ -435,3 +467,45 @@ function initai_autofill()
     }
 }
 
+function autocheck_reset()
+{
+    let last_node = $("#autocheck-container tr[data-index]").remove();
+}
+
+function autocheck_new()
+{
+    autocheck_new_with_value();
+}
+
+function autocheck_new_with_value(item)
+{
+    let last_node = $("#autocheck-container tr[data-index]").last().attr("data-index");
+    let node=1;
+    if(last_node) {
+        node=parseInt(last_node)+1;
+    }
+    let html = $("#autocheck-template").html();
+    html=html.replace(/@node@/g,""+node);
+    //console.log(html);
+    $("#autocheck-container").append(html);
+    $("#autocheck-actionbar").insertAfter($("#autocheck-container tr").last());
+
+    if(item) {
+        $("#autocheck_url_"+node).val(item["url"]);
+        $("#autocheck_selector_"+node).val(item["selector"]);
+        $("#autocheck_value_"+node).prop("checked", item["value"]);
+    }
+}
+
+function autocheck_remove(node)
+{
+    $("#autocheck-container tr[data-index='"+ node +"']").remove();
+}
+
+function initai_autocheck()
+{
+    let last_node = $("#autocheck-container tr[data-index]").last().attr("data-index");
+    if(!last_node) {
+        autocheck_new();
+    }
+}

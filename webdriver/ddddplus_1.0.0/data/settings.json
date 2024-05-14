@@ -1,1 +1,17 @@
-{"homepage": "about:blank", "ocr_captcha": {"enable": true, "beta": true, "force_submit": true, "captcha": [{"enable": true, "url": "", "captcha": "", "input": "", "maxlength": "4"}]}, "advanced": {"chrome_extension": true, "window_size": "480,1024", "checkall_keyword": "\"\"", "remote_url": "\"http://127.0.0.1:16888/\""}, "autofill": [{"enable": true, "url": "", "selector": "", "value": ""}]}
+{
+    "homepage": "about:blank",
+    "ocr_captcha": {
+        "enable": true,
+        "beta": true,
+        "force_submit": true,
+        "captcha": []
+    },
+    "advanced": {
+        "chrome_extension": true,
+        "window_size": "480,1024",
+        "checkall_keyword": "",
+        "remote_url": "\"http://127.0.0.1:16888/\""
+    },
+    "autofill": [],
+    "autocheck": []
+}

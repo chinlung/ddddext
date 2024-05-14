@@ -39,7 +39,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.16)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.17)"
 
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 
@@ -70,6 +70,7 @@ def get_default_config():
     config_dict["advanced"]["remote_url"] = "\"http://127.0.0.1:%d/\"" % (CONST_SERVER_PORT)
 
     config_dict['autofill']=[]
+    config_dict['autocheck']=[]
 
     return config_dict
 

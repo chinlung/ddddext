@@ -41,6 +41,11 @@
                         自動填表單
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="autocheck-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#autocheck-tab-pane" data-bs-toggle="tab" id="autocheck-tab" role="tab" type="button">
+                        自動打勾/移除勾勾
+                    </button>
+                </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <!-- tab 1 -->
@@ -99,18 +104,6 @@
                         </label>
                         <div class="col-sm-10">
                             <input class="form-control" id="window_size" value=""/>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-check-label" for="checkall_keyword">
-                            自動打勾✅的網址關鍵字
-                        </label>
-                        <div class="col-sm-10">
-                            <textarea class="form-control" id="checkall_keyword" rows="3"></textarea>
-                            <div class="bd-callout bd-callout-info">
-                              <strong>提示：</strong> 
-                                每組關鍵字需要用「<code>雙引號</code>」包起來, 用「<code>逗號</code>」分隔。關鍵字設太短，容易造成更多困擾，因為會被自動打勾。
-                            </div>            
                         </div>
                     </div>
                     <hr/>
@@ -199,6 +192,58 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- tab 4 -->
+                <div aria-labelledby="autocheck-tab" class="tab-pane fade" id="autocheck-tab-pane" role="tabpanel" tabindex="2">
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label form-check-label" for="checkall_keyword">
+                            自動打勾✅的網址關鍵字
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="checkall_keyword" rows="3"></textarea>
+                            <div class="bd-callout bd-callout-info">
+                              <strong>說明：</strong>
+                                <ul>
+                                    <li>每組關鍵字需要用「<code>雙引號</code>」包起來, 用「<code>逗號</code>」分隔。關鍵字設太短，容易造成更多困擾，因為會被自動打勾。</li>
+                                    <li>這裡只設定「網址」，並套用到網頁所有的checkbox。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <p>如果需要指定 selector 的內容是要「勾選」，還是「取消勾選」，請使用下列功能。</p>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    #
+                                </th>
+                                <th scope="col">
+                                    自動輸入網址關鍵字
+                                </th>
+                                <th scope="col">
+                                    自動輸入欄位selector
+                                </th>
+                                <th scope="col">
+                                    自動勾選狀態
+                                </th>
+                                <th scope="col">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="autocheck-container">
+                            <tr id="autocheck-actionbar">
+                                <td colspan="4">
+                                </td>
+                                <td>
+                                    <button class="btn btn-success" id="new_autocheck_btn" type="button">
+                                        增加
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="col-12">
                 <button class="btn btn-primary" id="run_btn">
@@ -276,6 +321,47 @@
                     </td>
                     <td>
                         <button class="btn btn-danger" onclick="autofill_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        #
+                    </th>
+                    <th scope="col">
+                        網址關鍵字
+                    </th>
+                    <th scope="col">
+                        欄位selector
+                    </th>
+                    <th scope="col">
+                        欄位填入值
+                    </th>
+                    <th scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="autocheck-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="autocheck_url_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-control" id="autocheck_selector_@node@" value=""/>
+                    </td>
+                    <td>
+                        <input class="form-check-input" type="checkbox" id="autocheck_value_@node@" value=""/>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="autocheck_remove(@node@);" type="button">
                             刪除
                         </button>
                     </td>
