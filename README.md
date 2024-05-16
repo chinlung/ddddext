@@ -17,13 +17,14 @@ https://github.com/max32002/ddddext/releases
 
 下載說明:
 * 目前有打包的「執行檔」，只有Windows 平台，其他作業系統需要使用原始碼來執行。當然Windows 平台也可以用原始碼執行 DDDDEXT.
-* 如果你是要用「原始碼」執行 DDDDEXT, 在透過git clone 或在github按下載原始碼的 zip檔，你的python 版本可以使用3.7 / 3.8 / 3.9 / 3.10 這4個版號。
+* 如果你是要用「原始碼」執行 DDDDEXT, 在透過git clone 或在github按下載原始碼的 zip檔。
 
 # Demo 
 (示範影片)
 
 * DDDDEXT 使用教學 https://youtu.be/wZy4BQ-z-S4
 * DDDDEXT 自動打勾+輸入欄位內容 https://youtu.be/98YikOWDLjo
+* DDDDEXT 在特定欄位自動打勾/移除勾勾 https://youtu.be/q17yvLtRato
 
 # How to Use 
 (使用教學)
