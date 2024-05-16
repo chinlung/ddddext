@@ -46,7 +46,11 @@ function set_ocr_answer(answer)
 {
     //console.log("answer:"+answer);
     if(answer.length > 0) {
+        $(target_input_selector).click();
         $(target_input_selector).val(answer);
+        let up = $.Event('keyup');
+        up.key=answer;
+        $(target_input_selector).trigger(up);
     }
 }
 
@@ -118,12 +122,14 @@ function ocr_main(settings) {
 
                     target_captcha_selector = d.captcha;
                     target_input_selector = d.input;
-                    const current_inputed_value = $(target_input_selector).val();
-                    if(current_inputed_value == "") {
-                        if(!orc_image_ready(remote_url_string)) {
-                            ocrInterval = setInterval(() => {
-                                orc_image_ready(remote_url_string);
-                            }, 100);
+                    if(target_captcha_selector.length && target_input_selector.length) {
+                        const current_inputed_value = $(target_input_selector).val();
+                        if(current_inputed_value == "") {
+                            if(!orc_image_ready(remote_url_string)) {
+                                ocrInterval = setInterval(() => {
+                                    orc_image_ready(remote_url_string);
+                                }, 100);
+                            }
                         }
                     }
                 }
@@ -145,7 +151,11 @@ function ocr_main(settings) {
                 }
                 //console.log(is_match_url);
                 if(is_match_url && d.selector.length  && d.value.length) {
+                    $(d.selector).click();
                     $(d.selector).val(d.value);
+                    let up = $.Event('keyup');
+                    up.key=d.value;
+                    $(d.selector).trigger(up);
                 }
             });
         }
