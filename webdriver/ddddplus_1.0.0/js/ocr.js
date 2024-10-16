@@ -1,24 +1,22 @@
 const storage = chrome.storage.local;
 var settings = null;
-var inputInterval = null;
 var ocrInterval = null;
 var target_captcha_length = 4;
 var target_captcha_selector = "";
 var target_input_selector = "";
 
-function get_ocr_image()
-{
-    //console.log("get_ocr_image");
+function get_ocr_image(captcha_selector) {
+    //console.log("get_ocr_image: " + captcha_selector);
     let image_data = "";
-    let img = document.querySelector(target_captcha_selector);
-    if(img!=null) {
+    let img = document.querySelector(captcha_selector);
+    if (img != null) {
         let canvas = document.createElement('canvas');
         let context = canvas.getContext('2d');
         canvas.height = img.naturalHeight;
         canvas.width = img.naturalWidth;
         context.drawImage(img, 0, 0);
         let img_data = canvas.toDataURL();
-        if(img_data) {
+        if (img_data) {
             image_data = img_data.split(",")[1];
             //console.log(image_data);
         }
@@ -26,106 +24,115 @@ function get_ocr_image()
     return image_data;
 }
 
-var last_captcha_answer="";
+var last_captcha_answer = "";
 chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
-    if(message.answer.length==target_captcha_length) {
+    if (message.answer.length == target_captcha_length) {
         set_ocr_answer(message.answer);
-        last_captcha_answer=message.answer;
+        last_captcha_answer = message.answer;
     } else {
         // renew captcha.
-        if(last_captcha_answer!=message.answer) {
-            last_captcha_answer=message.answer;
+        if (last_captcha_answer != message.answer) {
+            last_captcha_answer = message.answer;
             console.log("renew captcha");
             $(target_captcha_selector).click();
         }
     }
 });
 
-function set_ocr_answer(answer)
-{
+function javascript_keypress(selector, text) {
+    $(selector).click();
+    $(selector).val(text);
+    let up = $.Event('keyup');
+    up.key = text;
+    $(selector).trigger(up);
+}
+
+function set_ocr_answer(answer) {
     //console.log("answer:"+answer);
-    if(answer.length > 0) {
-        $(target_input_selector).click();
-        $(target_input_selector).val(answer);
-        let up = $.Event('keyup');
-        up.key=answer;
-        $(target_input_selector).trigger(up);
+    const current_inputed_value = $(target_input_selector).val();
+    if (answer.length > 0) {
+        if(current_inputed_value != answer) {
+            let sendkey_by_webdriver = false;
+            if(settings) {
+                if (settings.hasOwnProperty("token")) {
+                    sendkey_by_webdriver = true;
+                }
+            }
+            //console.log("sendkey_by_webdriver: " + sendkey_by_webdriver);
+            //console.log(settings);
+            if(!sendkey_by_webdriver) {
+                javascript_keypress(target_input_selector, answer);
+            } else {
+                webdriver_location_sendkey(settings, target_input_selector, answer, document.location.href);
+            }
+        }
     }
 }
 
-async function get_ocr_answer(api_url, image_data)
-{
+async function get_ocr_answer(api_url, image_data) {
     let bundle = {
-      action: 'ocr',
-      data: {
-        'url': api_url + 'ocr',
-        'image_data':image_data,
-      }
+        action: 'ocr',
+        data: {
+            'url': api_url + 'ocr',
+            'image_data': image_data,
+        }
     };
 
     const return_answer = await chrome.runtime.sendMessage(bundle);
     //console.log(return_answer);
 }
 
-function orc_image_ready(api_url)
-{
-    let ret=false;
-    let image_data = get_ocr_image();
-    if(image_data.length>0) {
-        ret=true;
-        if(ocrInterval) clearInterval(ocrInterval);
+function orc_image_ready(api_url) {
+    let ret = false;
+    let image_data = get_ocr_image(target_captcha_selector);
+    if (image_data.length > 0) {
+        ret = true;
+        if (ocrInterval) clearInterval(ocrInterval);
         get_ocr_answer(api_url, image_data);
     }
-    //console.log("orc_image_ready:"+ret);
+    //console.log("orc_image_ready:" + ret);
     return ret;
-}
-
-function get_remote_url(settings)
-{
-    let remote_url_string = "";
-    if(settings) {
-        let remote_url_array = [];
-        if(settings.advanced.remote_url.length > 0) {
-            remote_url_array = JSON.parse('[' +  settings.advanced.remote_url +']');
-        }
-        if(remote_url_array.length) {
-            remote_url_string = remote_url_array[0];
-        }
-    }
-    return remote_url_string;
 }
 
 function ocr_main(settings) {
     //console.log("ocr main");
-    if(settings) {
+    if (settings) {
         let remote_url_string = get_remote_url(settings);
 
-        if(settings.ocr_captcha.captcha.length) {
-            settings.ocr_captcha.captcha.forEach((d)=> {
+        if (settings.ocr_captcha.captcha.length) {
+            settings.ocr_captcha.captcha.forEach((d) => {
                 //console.log(d);
                 let is_match_url = false;
-                if(d.enable) {
-                    if(d.url=="") {
+                if (d.enable) {
+                    if (d.url == "") {
                         is_match_url = true;
                     } else {
-                        if(document.location.href.indexOf(d.url) > -1) {
+                        if (document.location.href.indexOf(d.url) > -1) {
                             is_match_url = true;
                         }
                     }
                 }
+                //console.log(document.location.href);
                 //console.log(is_match_url);
-                if(is_match_url && d.captcha.length  && d.input.length) {
-                    if(d.maxlength.length > 0) {
+                if (is_match_url && d.captcha.length && d.input.length) {
+                    if (d.maxlength.length > 0) {
                         target_captcha_length = parseInt(d.maxlength);
                     }
 
                     target_captcha_selector = d.captcha;
                     target_input_selector = d.input;
-                    if(target_captcha_selector.length && target_input_selector.length) {
-                        const current_inputed_value = $(target_input_selector).val();
-                        if(current_inputed_value == "") {
-                            if(!orc_image_ready(remote_url_string)) {
+                    if (target_captcha_selector.length && target_input_selector.length) {
+                        let current_inputed_value = $(target_input_selector).val();
+                        //console.log("current_inputed_value:" + current_inputed_value);
+                        if(d.captcha.length > 3) {
+                            if(current_inputed_value == "驗證碼") {
+                                current_inputed_value = "";
+                                $(target_input_selector).val("");
+                            }
+                        }
+                        if (current_inputed_value == "") {
+                            if (!orc_image_ready(remote_url_string)) {
                                 ocrInterval = setInterval(() => {
                                     orc_image_ready(remote_url_string);
                                 }, 100);
@@ -136,45 +143,45 @@ function ocr_main(settings) {
             });
         }
 
-        if(settings.autofill.length) {
-            settings.autofill.forEach((d)=> {
+        if (settings.autofill.length) {
+            settings.autofill.forEach((d) => {
                 //console.log(d);
                 let is_match_url = false;
-                if(d.enable) {
-                    if(d.url=="") {
+                if (d.enable) {
+                    if (d.url == "") {
                         is_match_url = true;
                     } else {
-                        if(document.location.href.indexOf(d.url) > -1) {
+                        if (document.location.href.indexOf(d.url) > -1) {
                             is_match_url = true;
                         }
                     }
                 }
                 //console.log(is_match_url);
-                if(is_match_url && d.selector.length  && d.value.length) {
+                if (is_match_url && d.selector.length && d.value.length) {
                     $(d.selector).click();
                     $(d.selector).val(d.value);
                     let up = $.Event('keyup');
-                    up.key=d.value;
+                    up.key = d.value;
                     $(d.selector).trigger(up);
                 }
             });
         }
 
-        if(settings.autocheck.length) {
-            settings.autocheck.forEach((d)=> {
+        if (settings.autocheck.length) {
+            settings.autocheck.forEach((d) => {
                 //console.log(d);
                 let is_match_url = false;
-                if(d.enable) {
-                    if(d.url=="") {
+                if (d.enable) {
+                    if (d.url == "") {
                         is_match_url = true;
                     } else {
-                        if(document.location.href.indexOf(d.url) > -1) {
+                        if (document.location.href.indexOf(d.url) > -1) {
                             is_match_url = true;
                         }
                     }
                 }
                 //console.log(is_match_url);
-                if(is_match_url && d.selector.length) {
+                if (is_match_url && d.selector.length) {
                     $(d.selector).prop("checked", d.value);
                 }
             });
@@ -182,56 +189,53 @@ function ocr_main(settings) {
     }
 }
 
-function checkall()
-{
+function checkall() {
     $('input[type=checkbox]:not(:checked)').each(function() {
         $(this).click();
     });
 }
 
-function checkall_main(settings)
-{
-    if(settings) {
+function checkall_main(settings) {
+    if (settings) {
         //console.log(settings.advanced.checkall_keyword);
         let checkall_keyword_array = [];
-        if(settings) {
-            if(settings.advanced.checkall_keyword.length > 0) {
-                if(settings.advanced.checkall_keyword!='""') {
-                    checkall_keyword_array = JSON.parse('[' + settings.advanced.checkall_keyword +']');
+        if (settings) {
+            if (settings.advanced.checkall_keyword.length > 0) {
+                if (settings.advanced.checkall_keyword != '""') {
+                    checkall_keyword_array = JSON.parse('[' + settings.advanced.checkall_keyword + ']');
                 }
             }
         }
         //console.log(checkall_keyword_array);
         for (let i = 0; i < checkall_keyword_array.length; i++) {
             let is_match_url = false;
-            if(document.location.href.indexOf(checkall_keyword_array[i]) > -1) {
+            if (document.location.href.indexOf(checkall_keyword_array[i]) > -1) {
                 is_match_url = true;
             }
-            //console.log(is_match_url);
-            if(is_match_url) {
+            console.log(document.location.href);
+            console.log(is_match_url);
+            if (is_match_url) {
                 checkall();
             }
         }
     }
 }
 
-storage.get('settings', function (items)
-{
-    if (items.settings)
-    {
+storage.get('settings', function(items) {
+    if (items.settings) {
         settings = items.settings;
     }
 });
 
-storage.get('status', function (items)
-{
-    if (items.status && items.status=='ON')
-    {
-        inputInterval= setInterval(() => {
+var inputInterval = setInterval(() => {
+    storage.get('status', function(items) {
+        if (items.status && items.status == 'ON') {
             ocr_main(settings);
             checkall_main(settings);
-        }, 200);
-    } else {
-        //console.log('maxbot status is not ON');
-    }
-});
+        } else {
+            //console.log('maxbot status is not OFF');
+        }
+    });
+}, 200);
+
+console.log('start ocr.js');

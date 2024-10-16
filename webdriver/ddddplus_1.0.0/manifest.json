@@ -49,6 +49,7 @@
             "run_at": "document_end",
             "js": [
                 "jquery.min.js",
+                "js/common.js",
                 "js/ocr.js"
             ]
         }

@@ -1,17 +1,43 @@
 {
     "homepage": "about:blank",
+    "refresh_datetime": "",
     "ocr_captcha": {
         "enable": true,
         "beta": true,
         "force_submit": true,
-        "captcha": []
+        "captcha": [
+            {
+                "enable": true,
+                "url": "",
+                "captcha": "",
+                "input": "",
+                "maxlength": "4"
+            }
+        ]
     },
     "advanced": {
         "chrome_extension": true,
-        "window_size": "480,1024",
-        "checkall_keyword": "",
-        "remote_url": "\"http://127.0.0.1:16888/\""
+        "checkall_keyword": "\"\"",
+        "headless": false,
+        "verbose": false,
+        "remote_url": "\"http://127.0.0.1:16888/\"",
+        "proxy_server_port": "",
+        "window_size": "480,1024"
     },
-    "autofill": [],
-    "autocheck": []
+    "autofill": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": ""
+        }
+    ],
+    "autocheck": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": false
+        }
+    ]
 }

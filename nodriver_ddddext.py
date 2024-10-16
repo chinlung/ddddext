@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 #encoding=utf-8
+import argparse
 import base64
 import json
 import logging
@@ -30,27 +31,45 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.18)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.19)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
-
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
 warnings.simplefilter('ignore',InsecureRequestWarning)
 ssl._create_default_https_context = ssl._create_unverified_context
 logging.basicConfig()
 logger = logging.getLogger('logger')
 
-def get_config_dict():
+def get_config_dict(args):
     app_root = util.get_app_root()
     config_filepath = os.path.join(app_root, CONST_MAXBOT_CONFIG_FILE)
+
+    # allow assign config by command line.
+    if args.input and len(args.input) > 0:
+        config_filepath = args.input
 
     config_dict = None
     if os.path.isfile(config_filepath):
         with open(config_filepath) as json_data:
             config_dict = json.load(json_data)
+
+            # Define a dictionary to map argument names to their paths in the config_dict
+            arg_to_path = {
+                "homepage": ["homepage"],
+                "proxy_server": ["advanced", "proxy_server_port"],
+                "window_size": ["advanced", "window_size"]
+            }
+
+            # Update the config_dict based on the arguments
+            for arg, path in arg_to_path.items():
+                value = getattr(args, arg)
+                if value and len(str(value)) > 0:
+                    d = config_dict
+                    for key in path[:-1]:
+                        d = d[key]
+                    d[path[-1]] = value
 
     return config_dict
 
@@ -66,22 +85,12 @@ async def nodriver_goto_homepage(driver, config_dict):
 
 def get_nodriver_browser_args():
     browser_args = [
-        "--user-agent=%s" % (USER_AGENT),
-        "--disable-2d-canvas-clip-aa",
-        "--disable-3d-apis",
         "--disable-animations",
         "--disable-app-info-dialog-mac",
         "--disable-background-networking",
         "--disable-backgrounding-occluded-windows",
-        "--disable-bookmark-reordering",
-        "--disable-boot-animation",
         "--disable-breakpad",
-        "--disable-canvas-aa",
-        "--disable-client-side-phishing-detection",
-        "--disable-cloud-import",
-        "--disable-component-cloud-policy",
         "--disable-component-update",
-        "--disable-composited-antialiasing",
         "--disable-default-apps",
         "--disable-dev-shm-usage",
         "--disable-device-discovery-notifications",
@@ -93,7 +102,6 @@ def get_nodriver_browser_args():
         "--disable-login-animations",
         "--disable-login-screen-apps",
         "--disable-notifications",
-        "--disable-office-editing-component-extension",
         "--disable-password-generation",
         "--disable-popup-blocking",
         "--disable-renderer-backgrounding",
@@ -107,13 +115,13 @@ def get_nodriver_browser_args():
         "--no-default-browser-check",
         "--no-first-run",
         "--no-pings",
-        "--no-sandbox"
         "--no-service-autorun",
         "--password-store=basic",
-        "--remote-allow-origins=*",
+        "--remote-debugging-host=127.0.0.1",
         "--lang=zh-TW",
         #"--disable-remote-fonts",
     ]
+
     return browser_args
 
 def get_maxbot_extension_path(extension_folder):
@@ -154,9 +162,15 @@ async def nodriver_resize_window(tab, config_dict):
                 position_left = int(size_array[0]) * int(size_array[2])
             #tab = await driver.main_tab()
             if tab:
-                await tab.set_window_size(left=position_left, top=30, width=int(size_array[0]), height=int(size_array[1]))
+                try:
+                    await tab.set_window_size(left=position_left, top=30, width=int(size_array[0]), height=int(size_array[1]))
+                except Exception as exc:
+                    print(exc)
+                    print("請關閉所有視窗後，重新操作一次")
+                    pass
 
-async def nodriver_current_url(tab):
+# we only handle last tab.
+async def nodriver_current_url(driver, tab):
     is_quit_bot = False
     exit_bot_error_strings = [
         "server rejected WebSocket connection: HTTP 500",
@@ -165,6 +179,19 @@ async def nodriver_current_url(tab):
     ]
 
     url = ""
+    tab_count = len(driver.tabs)
+    #print("tab_count:", tab_count)
+
+    # PS: manually close tab will cause nodriver no response.
+    if tab_count > 1:
+        tab = driver.tabs[tab_count-1]
+
+    reset_active_tab = None
+    if not tab in driver.tabs:
+        print("tab closed by user before.")
+        tab = driver.tabs[tab_count-1]
+        reset_active_tab = tab
+
     if tab:
         url_dict = {}
         try:
@@ -189,7 +216,7 @@ async def nodriver_current_url(tab):
                     if "0" in url_dict[k]:
                         url_array.append(url_dict[k]["0"])
             url = ''.join(url_array)
-    return url, is_quit_bot
+    return url, is_quit_bot, reset_active_tab
 
 def nodriver_overwrite_prefs(conf):
     #print(conf.user_data_dir)
@@ -197,7 +224,7 @@ def nodriver_overwrite_prefs(conf):
     if not os.path.exists(prefs_filepath):
         os.mkdir(prefs_filepath)
     prefs_filepath = os.path.join(prefs_filepath,"Preferences")
-    
+
     prefs_dict = {
         "credentials_enable_service": False,
         "ack_existing_ntp_extensions": False,
@@ -251,8 +278,103 @@ def nodriver_overwrite_prefs(conf):
     with open(state_filepath, 'w') as outfile:
         outfile.write(json_str)
 
-async def main():
-    config_dict = get_config_dict()
+async def check_refresh_datetime_occur(driver, target_time):
+    is_refresh_datetime_sent = False
+
+    system_clock_data = datetime.now()
+    current_time = system_clock_data.strftime('%H:%M:%S')
+    if target_time == current_time:
+        try:
+            for tab in driver.tabs:
+                await tab.reload()
+                is_refresh_datetime_sent = True
+                print("send refresh at time:", current_time)
+        except Exception as exc:
+            print(exc)
+            pass
+
+    return is_refresh_datetime_sent
+
+async def sendkey_to_browser(driver, config_dict, url):
+    tmp_filepath = ""
+    if "token" in config_dict:
+        app_root = util.get_app_root()
+        tmp_file = config_dict["token"] + ".tmp"
+        tmp_filepath = os.path.join(app_root, tmp_file)
+
+    if os.path.exists(tmp_filepath):
+        sendkey_dict = None
+        try:
+            with open(tmp_filepath) as json_data:
+                sendkey_dict = json.load(json_data)
+                print(sendkey_dict)
+        except Exception as e:
+            print("error on open file")
+            print(e)
+            pass
+
+        if sendkey_dict:
+            #print("nodriver start to sendkey")
+            for each_tab in driver.tabs:
+                all_command_done = await sendkey_to_browser_exist(each_tab, sendkey_dict, url)
+                
+                # must all command success to delete tmp file.
+                if all_command_done:
+                    try:
+                        os.unlink(tmp_filepath)
+                        #print("remove file:", tmp_filepath)
+                    except Exception as e:
+                        pass
+
+async def sendkey_to_browser_exist(tab, sendkey_dict, url):
+    all_command_done = True
+    if "command" in sendkey_dict:
+        for cmd_dict in sendkey_dict["command"]:
+            #print("cmd_dict", cmd_dict)
+            matched_location = True
+            if "location" in cmd_dict:
+                if cmd_dict["location"] != url:
+                    matched_location = False
+
+            if matched_location:
+                if cmd_dict["type"] == "sendkey":
+                    print("sendkey")
+                    target_text = cmd_dict["text"]
+                    try:
+                        element = await tab.query_selector(cmd_dict["selector"])
+                        if element:
+                            await element.click()
+                            await element.apply('function (element) {element.value = ""; } ')
+                            await element.send_keys(target_text);
+                        else:
+                            #print("element not found:", select_query)
+                            pass
+                    except Exception as e:
+                        all_command_done = False
+                        #print("click fail for selector:", select_query)
+                        print(e)
+                        pass
+                
+                if cmd_dict["type"] == "click":
+                    print("click")
+                    try:
+                        element = await tab.query_selector(cmd_dict["selector"])
+                        if element:
+                            await element.click()
+                        else:
+                            #print("element not found:", select_query)
+                            pass
+                    except Exception as e:
+                        all_command_done = False
+                        #print("click fail for selector:", select_query)
+                        print(e)
+                        pass
+            time.sleep(0.05)
+    return all_command_done
+
+async def main(args):
+    config_dict = get_config_dict(args)
+    config_dict["token"] = util.get_token()
 
     driver = None
     tab = None
@@ -268,7 +390,8 @@ async def main():
         driver = await uc.start(conf)
         if not driver is None:
             tab = await nodriver_goto_homepage(driver, config_dict)
-            await nodriver_resize_window(tab, config_dict)
+            if not config_dict["advanced"]["headless"]:
+                await nodriver_resize_window(tab, config_dict)
         else:
             print("無法使用nodriver，程式無法繼續工作")
             sys.exit()
@@ -287,8 +410,9 @@ async def main():
         print(exc)
         pass
 
-    maxbot_last_reset_time = time.time()
     is_quit_bot = False
+    is_refresh_datetime_sent = False
+
     while True:
         time.sleep(0.05)
 
@@ -298,7 +422,13 @@ async def main():
             break
 
         if not is_quit_bot:
-            url, is_quit_bot = await nodriver_current_url(tab)
+            url, is_quit_bot, reset_act_tab = await nodriver_current_url(driver, tab)
+            if not reset_act_tab is None:
+                tab = reset_act_tab
+            #print("act_tab url:", url)
+
+        if not is_refresh_datetime_sent:
+            is_refresh_datetime_sent = await check_refresh_datetime_occur(driver, config_dict["refresh_datetime"])
 
         if is_quit_bot:
             try:
@@ -314,8 +444,35 @@ async def main():
             if len(url) == 0:
                 continue
 
+        await sendkey_to_browser(driver, config_dict, url)
+
 def cli():
-    uc.loop().run_until_complete(main())
+    parser = argparse.ArgumentParser(
+            description="DDDDEXT Argument Parser")
+
+    parser.add_argument("--input",
+        help="config file path",
+        type=str)
+
+    parser.add_argument("--homepage",
+        help="overwrite homepage setting",
+        type=str)
+
+    #default="False",
+    parser.add_argument("--headless",
+        help="headless mode",
+        type=str)
+
+    parser.add_argument("--window_size",
+        help="Window size",
+        type=str)
+
+    parser.add_argument("--proxy_server",
+        help="overwrite proxy server, format: ip:port",
+        type=str)
+
+    args = parser.parse_args()
+    uc.loop().run_until_complete(main(args))
 
 if __name__ == "__main__":
     cli()

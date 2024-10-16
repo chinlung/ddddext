@@ -39,14 +39,10 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.18)"
-
+CONST_APP_VERSION = "DDDDEXT (2024.04.19)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
-
 CONST_SERVER_PORT = 16888
-
 CONST_HOMEPAGE_DEFAULT = "about:blank"
-
 
 translate={}
 
@@ -54,6 +50,8 @@ def get_default_config():
     config_dict={}
 
     config_dict["homepage"] = CONST_HOMEPAGE_DEFAULT
+    config_dict["refresh_datetime"] = ""
+
     config_dict["ocr_captcha"] = {}
     config_dict["ocr_captcha"]["enable"] = True
     config_dict["ocr_captcha"]["beta"] = True
@@ -63,11 +61,16 @@ def get_default_config():
     config_dict['advanced']={}
 
     config_dict["advanced"]["chrome_extension"] = True
-    config_dict["advanced"]["window_size"] = "480,1024"
     config_dict["advanced"]["checkall_keyword"] = ""
+
+    config_dict["advanced"]["headless"] = False
+    config_dict["advanced"]["verbose"] = False
 
     # remote_url not under ocr, due to not only support ocr features.
     config_dict["advanced"]["remote_url"] = "\"http://127.0.0.1:%d/\"" % (CONST_SERVER_PORT)
+
+    config_dict["advanced"]["proxy_server_port"] = ""
+    config_dict["advanced"]["window_size"] = "480,1024"
 
     config_dict['autofill']=[]
     config_dict['autocheck']=[]
@@ -129,6 +132,17 @@ def launch_maxbot():
 
     threading.Thread(target=util.launch_maxbot, args=(script_name,"","","","",window_size,)).start()
 
+def clean_tmp_file():
+    Root_Dir = util.get_app_root()
+    target_folder = os.listdir(Root_Dir)
+    for item in target_folder:
+        if item.endswith(".tmp"):
+            os.remove(os.path.join(Root_Dir, item))
+
+class HomepageHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("www/settings.html")
+
 class VersionHandler(tornado.web.RequestHandler):
     def get(self):
         self.write({"version":self.application.version})
@@ -179,10 +193,9 @@ class SaveJsonHandler(tornado.web.RequestHandler):
                 pass
 
         if is_pass_check:
-            config_dict = _body
-
             app_root = util.get_app_root()
             config_filepath = os.path.join(app_root, CONST_MAXBOT_CONFIG_FILE)
+            config_dict = _body
 
             util.save_json(config_dict, config_filepath)
 
@@ -191,6 +204,38 @@ class SaveJsonHandler(tornado.web.RequestHandler):
             self.write(dict(error=dict(message=error_message,code=error_code)))
 
         self.finish()
+
+class SendkeyHandler(tornado.web.RequestHandler):
+    def post(self):
+        #print("SendkeyHandler")
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+        _body = None
+        is_pass_check = True
+        errorMessage = ""
+        errorCode = 0
+
+        if is_pass_check:
+            is_pass_check = False
+            try :
+                _body = json.loads(self.request.body)
+                is_pass_check = True
+            except Exception:
+                errorMessage = "wrong json format"
+                errorCode = 1001
+                pass
+
+        if is_pass_check:
+            app_root = util.get_app_root()
+            if "token" in _body:
+                tmp_file = _body["token"] + ".tmp"
+                config_filepath = os.path.join(app_root, tmp_file)
+                #print("tmp_file:", config_filepath)
+                util.save_json(_body, config_filepath)
+
+        self.write({"return": True})
 
 class OcrHandler(tornado.web.RequestHandler):
     def get(self):
@@ -249,8 +294,10 @@ async def main_server():
         pass
 
     app = Application([
+        ("/", HomepageHandler),
         ("/version", VersionHandler),
         ("/shutdown", ShutdownHandler),
+        ("/sendkey", SendkeyHandler),
 
         # status api
         ("/status", StatusHandler),
@@ -270,7 +317,7 @@ async def main_server():
     app.listen(CONST_SERVER_PORT)
     print("server running on port:", CONST_SERVER_PORT)
 
-    url="http://127.0.0.1:" + str(CONST_SERVER_PORT) + "/settings.html"
+    url="http://127.0.0.1:" + str(CONST_SERVER_PORT) + "/"
     print("goto url:", url)
     webbrowser.open_new(url)
     await asyncio.Event().wait()
@@ -288,6 +335,7 @@ if __name__ == "__main__":
     GLOBAL_SERVER_SHUTDOWN = False
     
     threading.Thread(target=web_server, daemon=True).start()
+    clean_tmp_file()
     
     print("maxbot app version:", CONST_APP_VERSION)
     print("python version:", platform.python_version())

@@ -51,4 +51,118 @@ function get_target_date_with_order(settings, matched_block)
 
 function getRandom(min,max){
     return Math.floor(Math.random()*(max-min+1))+min;
-};
+}
+
+function get_remote_url(settings) {
+    let remote_url_string = "";
+    if (settings) {
+        let remote_url_array = [];
+        if (settings.advanced.remote_url.length > 0) {
+            remote_url_array = JSON.parse('[' + settings.advanced.remote_url + ']');
+        }
+        if (remote_url_array.length) {
+            remote_url_string = remote_url_array[0];
+        }
+    }
+    return remote_url_string;
+}
+
+async function webdriver_sendkey(settings, selector, answer) {
+    let api_url = get_remote_url(settings);
+    //console.log("api_url:" + api_url);
+    if(api_url.indexOf("127.0.0.")>-1) {
+        let body = {
+            token: settings.token,
+            command: [
+            {type: 'sendkey', selector: selector, text: answer}
+        ]};
+        body = JSON.stringify(body);
+
+        let bundle = {
+            action: 'post',
+            data: {
+                'url': api_url + 'sendkey',
+                'post_data': body,
+            }
+        };
+        let bundle_string = JSON.stringify(bundle);
+        //console.log(bundle);
+        const return_answer = await chrome.runtime.sendMessage(bundle);
+        //console.log(return_answer);
+    }
+}
+
+async function webdriver_location_sendkey(settings, selector, answer, location) {
+    let api_url = get_remote_url(settings);
+    //console.log("api_url:" + api_url);
+    if(api_url.indexOf("127.0.0.")>-1) {
+        let body = {
+            token: settings.token,
+            command: [
+            {type: 'sendkey', selector: selector, text: answer, location: location}
+        ]};
+        body = JSON.stringify(body);
+
+        let bundle = {
+            action: 'post',
+            data: {
+                'url': api_url + 'sendkey',
+                'post_data': body,
+            }
+        };
+        let bundle_string = JSON.stringify(bundle);
+        //console.log(bundle);
+        const return_answer = await chrome.runtime.sendMessage(bundle);
+        //console.log(return_answer);
+    }
+}
+
+async function webdriver_click(settings, selector) {
+    let api_url = get_remote_url(settings);
+    //console.log("api_url:" + api_url);
+    if(api_url.indexOf("127.0.0.")>-1) {
+        let body = {
+            token: settings.token,
+            command: [
+            {type: 'click', selector: selector}
+        ]};
+        body = JSON.stringify(body);
+
+        let bundle = {
+            action: 'post',
+            data: {
+                'url': api_url + 'sendkey',
+                'post_data': body,
+            }
+        };
+        let bundle_string = JSON.stringify(bundle);
+        //console.log(bundle);
+        const return_answer = await chrome.runtime.sendMessage(bundle);
+        //console.log(return_answer);
+    }
+}
+
+async function webdriver_location_click(settings, selector, location) {
+    let api_url = get_remote_url(settings);
+    //console.log("api_url:" + api_url);
+    if(api_url.indexOf("127.0.0.")>-1) {
+        let body = {
+            token: settings.token,
+            command: [
+            {type: 'click', selector: selector, location: location}
+        ]};
+        body = JSON.stringify(body);
+
+        let bundle = {
+            action: 'post',
+            data: {
+                'url': api_url + 'sendkey',
+                'post_data': body,
+            }
+        };
+        let bundle_string = JSON.stringify(bundle);
+        //console.log(bundle);
+        const return_answer = await chrome.runtime.sendMessage(bundle);
+        //console.log(return_answer);
+    }
+}
