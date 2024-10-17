@@ -166,3 +166,53 @@ async function webdriver_location_click(settings, selector, location) {
         //console.log(return_answer);
     }
 }
+
+async function webdriver_eval(settings, text) {
+    let api_url = get_remote_url(settings);
+    //console.log("api_url:" + api_url);
+    if(api_url.indexOf("127.0.0.")>-1) {
+        let body = {
+            token: settings.token,
+            command: [
+            {type: 'eval', script: text}
+        ]};
+        body = JSON.stringify(body);
+
+        let bundle = {
+            action: 'post',
+            data: {
+                'url': api_url + 'eval',
+                'post_data': body,
+            }
+        };
+        let bundle_string = JSON.stringify(bundle);
+        //console.log(bundle);
+        const return_answer = await chrome.runtime.sendMessage(bundle);
+        //console.log(return_answer);
+    }
+}
+
+async function webdriver_location_eval(settings, text, location) {
+    let api_url = get_remote_url(settings);
+    //console.log("api_url:" + api_url);
+    if(api_url.indexOf("127.0.0.")>-1) {
+        let body = {
+            token: settings.token,
+            command: [
+            {type: 'eval', script: text, location: location}
+        ]};
+        body = JSON.stringify(body);
+
+        let bundle = {
+            action: 'post',
+            data: {
+                'url': api_url + 'eval',
+                'post_data': body,
+            }
+        };
+        let bundle_string = JSON.stringify(bundle);
+        //console.log(bundle);
+        const return_answer = await chrome.runtime.sendMessage(bundle);
+        //console.log(return_answer);
+    }
+}

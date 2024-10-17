@@ -17,7 +17,6 @@
     },
     "advanced": {
         "chrome_extension": true,
-        "checkall_keyword": "\"\"",
         "headless": false,
         "verbose": false,
         "remote_url": "\"http://127.0.0.1:16888/\"",
@@ -38,6 +37,19 @@
             "url": "",
             "selector": "",
             "value": false
+        }
+    ],
+    "injectjs": [
+        {
+            "enable": true,
+            "url": "",
+            "script": ""
+        }
+    ],
+    "checkall": [
+        {
+            "enable": true,
+            "url": ""
         }
     ]
 }

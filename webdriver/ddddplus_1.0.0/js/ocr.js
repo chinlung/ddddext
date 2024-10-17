@@ -27,15 +27,17 @@ function get_ocr_image(captcha_selector) {
 var last_captcha_answer = "";
 chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
-    if (message.answer.length == target_captcha_length) {
-        set_ocr_answer(message.answer);
-        last_captcha_answer = message.answer;
-    } else {
-        // renew captcha.
-        if (last_captcha_answer != message.answer) {
+    if(message.hasOwnProperty("answer")) {
+        if (message.answer.length == target_captcha_length) {
+            set_ocr_answer(message.answer);
             last_captcha_answer = message.answer;
-            console.log("renew captcha");
-            $(target_captcha_selector).click();
+        } else {
+            // renew captcha.
+            if (last_captcha_answer != message.answer) {
+                last_captcha_answer = message.answer;
+                console.log("renew captcha");
+                $(target_captcha_selector).click();
+            }
         }
     }
 });
@@ -52,16 +54,16 @@ function set_ocr_answer(answer) {
     //console.log("answer:"+answer);
     const current_inputed_value = $(target_input_selector).val();
     if (answer.length > 0) {
-        if(current_inputed_value != answer) {
+        if (current_inputed_value != answer) {
             let sendkey_by_webdriver = false;
-            if(settings) {
+            if (settings) {
                 if (settings.hasOwnProperty("token")) {
                     sendkey_by_webdriver = true;
                 }
             }
             //console.log("sendkey_by_webdriver: " + sendkey_by_webdriver);
             //console.log(settings);
-            if(!sendkey_by_webdriver) {
+            if (!sendkey_by_webdriver) {
                 javascript_keypress(target_input_selector, answer);
             } else {
                 webdriver_location_sendkey(settings, target_input_selector, answer, document.location.href);
@@ -125,8 +127,8 @@ function ocr_main(settings) {
                     if (target_captcha_selector.length && target_input_selector.length) {
                         let current_inputed_value = $(target_input_selector).val();
                         //console.log("current_inputed_value:" + current_inputed_value);
-                        if(d.captcha.length > 3) {
-                            if(current_inputed_value == "驗證碼") {
+                        if (d.captcha.length > 3) {
+                            if (current_inputed_value == "驗證碼") {
                                 current_inputed_value = "";
                                 $(target_input_selector).val("");
                             }
@@ -197,33 +199,63 @@ function checkall() {
 
 function checkall_main(settings) {
     if (settings) {
-        //console.log(settings.advanced.checkall_keyword);
-        let checkall_keyword_array = [];
         if (settings) {
-            if (settings.advanced.checkall_keyword.length > 0) {
-                if (settings.advanced.checkall_keyword != '""') {
-                    checkall_keyword_array = JSON.parse('[' + settings.advanced.checkall_keyword + ']');
+            settings.checkall.forEach((d) => {
+                //console.log(d);
+                let is_match_url = false;
+                if (d.enable) {
+                    if (d.url == "") {
+                        is_match_url = true;
+                    } else {
+                        is_match_url = wildcardMatchRegExp(document.location.href, d.url);
+                    }
                 }
-            }
-        }
-        //console.log(checkall_keyword_array);
-        for (let i = 0; i < checkall_keyword_array.length; i++) {
-            let is_match_url = false;
-            if (document.location.href.indexOf(checkall_keyword_array[i]) > -1) {
-                is_match_url = true;
-            }
-            console.log(document.location.href);
-            console.log(is_match_url);
-            if (is_match_url) {
-                checkall();
-            }
+                //console.log(d.url);
+                //console.log(is_match_url);
+                if (is_match_url) {
+                    checkall();
+                }
+            });
         }
     }
 }
 
+function wildcardMatchRegExp(text, pattern) {
+    const regexPattern = new RegExp(
+        "^" +
+        pattern
+        .replace(/\?/g, ".")
+        .replace(/\*/g, ".*") +
+        "$"
+    );
+    return regexPattern.test(text);
+}
+
+console.log('start ocr.js');
+
 storage.get('settings', function(items) {
     if (items.settings) {
         settings = items.settings;
+        if (settings) {
+            settings.injectjs.forEach((d) => {
+                //console.log(d);
+                let is_match_url = false;
+                if (d.enable) {
+                    if (d.url == "") {
+                        is_match_url = true;
+                    } else {
+                        is_match_url = wildcardMatchRegExp(document.location.href, d.url);
+                    }
+                }
+                //console.log(d.url);
+                //console.log(is_match_url);
+                if (is_match_url && d.script.length) {
+                    // Error handling response: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy
+                    // eval(d.script);
+                    webdriver_location_eval(settings, d.script, document.location.href);
+                }
+            });
+        }
     }
 });
 
@@ -237,5 +269,3 @@ var inputInterval = setInterval(() => {
         }
     });
 }, 200);
-
-console.log('start ocr.js');

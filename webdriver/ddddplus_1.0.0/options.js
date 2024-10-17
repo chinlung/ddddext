@@ -4,10 +4,10 @@ const save_button = document.querySelector('#save_btn');
 const new_captcha_button = document.querySelector('#new_captcha_btn');
 const new_autofill_button = document.querySelector('#new_autofill_btn');
 const new_autocheck_button = document.querySelector('#new_autocheck_btn');
+const new_checkall_button = document.querySelector('#new_checkall_btn');
 
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
 const remote_url = document.querySelector('#remote_url');
-const checkall_keyword = document.querySelector('#checkall_keyword');
 
 const PUBLIC_SERVER_URL = "http://maxbot.dropboxlike.com:16888/";
 
@@ -19,6 +19,8 @@ save_button.addEventListener('click', saveChanges);
 new_captcha_button.addEventListener('click', captcha_new);
 new_autofill_button.addEventListener('click', autofill_new);
 new_autocheck_button.addEventListener('click', autocheck_new);
+new_checkall_button.addEventListener('click', checkall_new);
+
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
 
 function get_autofill_array()
@@ -86,6 +88,24 @@ function get_captcha_array()
     return captcha;
 }
 
+function get_checkall_array() {
+    let checkall = [];
+    let last_node = $("#checkall-container tr[data-index]").last().attr("data-index");
+    let node = 0;
+    if (last_node) {
+        node = parseInt(last_node);
+    }
+    if (node > 0) {
+        for (let i = 1; i <= node; i++) {
+            let item = {};
+            item["enable"] = true;
+            item["url"] = $("#checkall_url_" + i).val();
+            checkall.push(item);
+        }
+    }
+    return checkall;
+}
+
 async function saveChanges()
 {
     const silent_flag = false;
@@ -101,15 +121,10 @@ async function saveChanges()
         
         settings.advanced.remote_url = remote_url_string;
 
-        let checkall_keyword_string = checkall_keyword.value;
-        if(checkall_keyword_string.indexOf('"')==-1) {
-            checkall_keyword_string = '"' + checkall_keyword_string + '"';
-        }
-        settings.advanced.checkall_keyword = checkall_keyword_string;
-
         settings.ocr_captcha.captcha = get_captcha_array();
         settings.autofill = get_autofill_array();
         settings.autocheck = get_autocheck_array();
+        settings.checkall = get_checkall_array();
 
         await storage.set(
         {
@@ -143,11 +158,6 @@ function loadChanges()
             }
             remote_url.value = remote_url_string;
 
-            checkall_keyword.value = settings.advanced.checkall_keyword;
-            if(checkall_keyword.value=='""') {
-                checkall_keyword.value='';
-            }
-
             if(settings.ocr_captcha.captcha.length) {
                 settings.ocr_captcha.captcha.forEach((d)=> {
                     captcha_new_with_value(d);
@@ -165,9 +175,16 @@ function loadChanges()
                 });
             }
 
+            if (settings.checkall.length) {
+                settings.checkall.forEach((d) => {
+                    checkall_new_with_value(d);
+                });
+            }
+
             initai_captcha();
             initai_autofill();
             initai_autocheck();
+            initai_checkall();
         } else {
             console.log('no settings found');
         }
@@ -329,5 +346,43 @@ function initai_autocheck()
     let last_node = $("#autocheck-container tr[data-index]").last().attr("data-index");
     if(!last_node) {
         autocheck_new();
+    }
+}
+
+function checkall_reset() {
+    let last_node = $("#checkall-container tr[data-index]").remove();
+}
+
+function checkall_new() {
+    checkall_new_with_value();
+}
+
+function checkall_new_with_value(item) {
+    let last_node = $("#checkall-container tr[data-index]").last().attr("data-index");
+    let node = 1;
+    if (last_node) {
+        node = parseInt(last_node) + 1;
+    }
+    let html = $("#checkall-template").html();
+    if (html) {
+        html = html.replace(/@node@/g, "" + node);
+        //console.log(html);
+        $("#checkall-container").append(html);
+        $("#checkall-actionbar").insertAfter($("#checkall-container tr").last());
+
+        if (item) {
+            $("#checkall_url_" + node).val(item["url"]);
+        }
+    }
+}
+
+function checkall_remove(node) {
+    $("#checkall-container tr[data-index='" + node + "']").remove();
+}
+
+function initai_checkall() {
+    let last_node = $("#checkall-container tr[data-index]").last().attr("data-index");
+    if (!last_node) {
+        checkall_new();
     }
 }

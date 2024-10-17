@@ -51,21 +51,33 @@
                         <path d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
                     </svg> 自動打勾/移除勾勾</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button aria-controls="injectjs-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#injectjs-tab-pane" data-bs-toggle="tab" id="injectjs-tab" role="tab" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-square" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                        <path d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                    </svg> 注入 Javascript</button>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <!-- tab 1 -->
             <div aria-labelledby="readme-tab" class="tab-pane fade show active" id="readme-tab-pane" role="tabpanel" tabindex="0">
                 <p>
-                    DDDDEXT 網頁驗證碼自動輸入機器人。
+                    DDDDEXT 是網頁驗證碼自動輸入機器人。
                 </p>
                 <p>
-                    爬山想搶山屋/搶信用卡活動的登錄/掛號...都需要輸入驗證碼，透過 ddddocr 可以自動識別文字驗證碼。
+                    爬山想搶山屋/搶信用卡活動的登錄/掛號…都需要輸入驗證碼，透過 ddddocr 可以自動識別並輸入文字驗證碼。
                 </p>
                 <p>
-                    售票系統的「驗證碼」機制會讓一般不會寫程式的民眾更難公平地購買到預期的門票。
+                    搶票機制，是在比誰更快送出訂單，機器人一定比人工點擊或輸入快，一般民眾在資訊技術的落差下，是被欺凌的弱勢族群，相信分享ddddext原始碼有助於改變搶票機制，是對公眾有利益的一件事。
                 </p>
                 <p>
-                    DDDDEXT 系統裡出現的「搶票」指的是「非台灣的藝文活動或車票」。
+                    售票系統的「驗證碼」機制會讓一般不會寫程式的民眾更難公平地購買到預期的門票，因為機器人可以自動填入驗證碼內容。
+                </p>
+                <p>
+                    在整個網站裡出現的「搶票」指的是「非台灣的藝文活動或車票」。
+                </p>
+                <p>
+                    搶票程式在全世界有什麼樣的標準？搶票程式只有在台灣會被處罰嗎？
                 </p>
                 <div class="bd-callout bd-callout-info">
                     台灣藝文活動的
@@ -209,20 +221,39 @@
             </div>
             <!-- tab 4 -->
             <div aria-labelledby="autocheck-tab" class="tab-pane fade" id="autocheck-tab-pane" role="tabpanel" tabindex="2">
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label form-check-label" for="checkall_keyword">
-                        自動打勾✅的網址關鍵字
-                    </label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="checkall_keyword" rows="3"></textarea>
-                        <div class="bd-callout bd-callout-info">
-                            <strong>說明：</strong>
-                            <ul>
-                                <li>每組關鍵字需要用「<code>雙引號</code>」包起來, 用「<code>逗號</code>」分隔。關鍵字設太短，容易造成更多困擾，因為會被自動打勾。</li>
-                                <li>這裡只設定「網址」，並套用到網頁所有的checkbox。</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div>自動打勾所有checkbox的網址關鍵字</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #
+                            </th>
+                            <th scope="col">
+                                matches URL
+                            </th>
+                            <th scope="col">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="checkall-container">
+                        <tr id="checkall-actionbar">
+                            <td colspan="2">
+                            </td>
+                            <td>
+                                <button class="btn btn-success" id="new_checkall_btn" type="button">
+                                    增加
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="bd-callout bd-callout-info">
+                    <strong>說明：</strong>
+                    <ul>
+                        <li>「<code>URL</code>」可以使用萬用字元 <code>*</code> 符號。</li>
+                        <li>「<code>URL</code>」沒輸入，代表不具備功能。</li>
+                        <li>只有符合 URL 的網址，才會把所有checkbox 打勾。</li>
+                    </ul>
                 </div>
                 <hr />
                 <p>如果需要指定 selector 的內容是要「勾選」，還是「取消勾選」，請使用下列功能。</p>
@@ -257,6 +288,42 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <!-- tab 5 -->
+            <div aria-labelledby="injectjs-tab" class="tab-pane fade" id="injectjs-tab-pane" role="tabpanel" tabindex="2">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                #
+                            </th>
+                            <th scope="col">
+                                注入 Javascript
+                            </th>
+                            <th scope="col">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="injectjs-container">
+                        <tr id="injectjs-actionbar">
+                            <td colspan="2">
+                            </td>
+                            <td>
+                                <button class="btn btn-success" id="new_injectjs_btn" type="button">
+                                    增加
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="bd-callout bd-callout-info">
+                    <strong>說明：</strong>
+                    <ul>
+                        <li>「<code>URL</code>」可以使用萬用字元 <code>*</code> 符號。</li>
+                        <li>「<code>URL</code>」沒輸入，代表每一頁都符合。</li>
+                        <li>「<code>Javascript</code>」雖然執行起來很方便，但實際上是非常的不安全(unsafe-eval)，請勿隨意貼上來路不明的腳本。</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-12">
@@ -423,6 +490,59 @@
                 </td>
                 <td>
                     <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
+                        刪除
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="disappear">
+    <table>
+        <tbody id="injectjs-template">
+            <tr data-index="@node@">
+                <th scope="row">
+                    @node@
+                </th>
+                <td>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label form-check-label" for="injectjs_url_@node@">
+                            matches URL
+                        </label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="injectjs_url_@node@" value="" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-sm-2 col-form-label form-check-label" for="injectjs_script_@node@">
+                            Javascript
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="injectjs_script_@node@" rows="4"></textarea>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-danger" onclick="injectjs_remove(@node@);" type="button">
+                        刪除
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="disappear">
+    <table>
+        <tbody id="checkall-template">
+            <tr data-index="@node@">
+                <th scope="row">
+                    @node@
+                </th>
+                <td>
+                    <input class="form-control" id="checkall_url_@node@" value="" />
+                </td>
+                <td>
+                    <button class="btn btn-danger" onclick="checkall_remove(@node@);" type="button">
                         刪除
                     </button>
                 </td>

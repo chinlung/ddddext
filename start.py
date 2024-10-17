@@ -39,7 +39,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.19)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.20)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_SERVER_PORT = 16888
 CONST_HOMEPAGE_DEFAULT = "about:blank"
@@ -61,7 +61,6 @@ def get_default_config():
     config_dict['advanced']={}
 
     config_dict["advanced"]["chrome_extension"] = True
-    config_dict["advanced"]["checkall_keyword"] = ""
 
     config_dict["advanced"]["headless"] = False
     config_dict["advanced"]["verbose"] = False
@@ -74,6 +73,8 @@ def get_default_config():
 
     config_dict['autofill']=[]
     config_dict['autocheck']=[]
+    config_dict['injectjs']=[]
+    config_dict['checkall']=[]
 
     return config_dict
 
@@ -230,7 +231,39 @@ class SendkeyHandler(tornado.web.RequestHandler):
         if is_pass_check:
             app_root = util.get_app_root()
             if "token" in _body:
-                tmp_file = _body["token"] + ".tmp"
+                tmp_file = _body["token"] + "_sendkey.tmp"
+                config_filepath = os.path.join(app_root, tmp_file)
+                #print("tmp_file:", config_filepath)
+                util.save_json(_body, config_filepath)
+
+        self.write({"return": True})
+
+class EvalHandler(tornado.web.RequestHandler):
+    def post(self):
+        #print("SendkeyHandler")
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
+        _body = None
+        is_pass_check = True
+        errorMessage = ""
+        errorCode = 0
+
+        if is_pass_check:
+            is_pass_check = False
+            try :
+                _body = json.loads(self.request.body)
+                is_pass_check = True
+            except Exception:
+                errorMessage = "wrong json format"
+                errorCode = 1001
+                pass
+
+        if is_pass_check:
+            app_root = util.get_app_root()
+            if "token" in _body:
+                tmp_file = _body["token"] + "_eval.tmp"
                 config_filepath = os.path.join(app_root, tmp_file)
                 #print("tmp_file:", config_filepath)
                 util.save_json(_body, config_filepath)
@@ -298,6 +331,7 @@ async def main_server():
         ("/version", VersionHandler),
         ("/shutdown", ShutdownHandler),
         ("/sendkey", SendkeyHandler),
+        ("/eval", EvalHandler),
 
         # status api
         ("/status", StatusHandler),

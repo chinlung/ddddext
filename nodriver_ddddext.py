@@ -31,7 +31,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.19)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.20)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -299,7 +299,7 @@ async def sendkey_to_browser(driver, config_dict, url):
     tmp_filepath = ""
     if "token" in config_dict:
         app_root = util.get_app_root()
-        tmp_file = config_dict["token"] + ".tmp"
+        tmp_file = config_dict["token"] + "_sendkey.tmp"
         tmp_filepath = os.path.join(app_root, tmp_file)
 
     if os.path.exists(tmp_filepath):
@@ -369,6 +369,62 @@ async def sendkey_to_browser_exist(tab, sendkey_dict, url):
                         #print("click fail for selector:", select_query)
                         print(e)
                         pass
+            time.sleep(0.05)
+    return all_command_done
+
+async def eval_to_browser(driver, config_dict, url):
+    tmp_filepath = ""
+    if "token" in config_dict:
+        app_root = util.get_app_root()
+        tmp_file = config_dict["token"] + "_eval.tmp"
+        tmp_filepath = os.path.join(app_root, tmp_file)
+
+    if os.path.exists(tmp_filepath):
+        eval_dict = None
+        try:
+            with open(tmp_filepath) as json_data:
+                eval_dict = json.load(json_data)
+                print(eval_dict)
+        except Exception as e:
+            print("error on open file")
+            print(e)
+            pass
+
+        if eval_dict:
+            #print("nodriver start to eval")
+            for each_tab in driver.tabs:
+                all_command_done = await eval_to_browser_exist(each_tab, eval_dict, url)
+                
+                # must all command success to delete tmp file.
+                if all_command_done:
+                    try:
+                        os.unlink(tmp_filepath)
+                        #print("remove file:", tmp_filepath)
+                    except Exception as e:
+                        pass
+
+async def eval_to_browser_exist(tab, eval_dict, url):
+    all_command_done = True
+    if "command" in eval_dict:
+        for cmd_dict in eval_dict["command"]:
+            #print("cmd_dict", cmd_dict)
+            matched_location = True
+            if "location" in cmd_dict:
+                if cmd_dict["location"] != url:
+                    matched_location = False
+
+            if matched_location:
+                if cmd_dict["type"] == "eval":
+                    print("eval")
+                    target_script = cmd_dict["script"]
+                    try:
+                        await tab.evaluate(target_script)
+                    except Exception as e:
+                        all_command_done = False
+                        #print("click fail for selector:", select_query)
+                        print(e)
+                        pass
+
             time.sleep(0.05)
     return all_command_done
 
@@ -445,6 +501,7 @@ async def main(args):
                 continue
 
         await sendkey_to_browser(driver, config_dict, url)
+        await eval_to_browser(driver, config_dict, url)
 
 def cli():
     parser = argparse.ArgumentParser(

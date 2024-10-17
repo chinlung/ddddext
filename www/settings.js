@@ -7,6 +7,8 @@ const exit_button = document.querySelector('#exit_btn');
 const new_captcha_button = document.querySelector('#new_captcha_btn');
 const new_autofill_button = document.querySelector('#new_autofill_btn');
 const new_autocheck_button = document.querySelector('#new_autocheck_btn');
+const new_injectjs_button = document.querySelector('#new_injectjs_btn');
+const new_checkall_button = document.querySelector('#new_checkall_btn');
 
 // preference
 const homepage = document.querySelector('#homepage');
@@ -14,7 +16,6 @@ const refresh_datetime = document.querySelector('#refresh_datetime');
 
 // advance
 const window_size = document.querySelector('#window_size');
-const checkall_keyword = document.querySelector('#checkall_keyword');
 
 
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
@@ -41,11 +42,6 @@ function load_settins_to_form(settings) {
         }
         remote_url.value = remote_url_string;
 
-        checkall_keyword.value = settings.advanced.checkall_keyword;
-        if (checkall_keyword.value == '""') {
-            checkall_keyword.value = '';
-        }
-
         if (settings.ocr_captcha.captcha.length) {
             settings.ocr_captcha.captcha.forEach((d) => {
                 captcha_new_with_value(d);
@@ -64,9 +60,23 @@ function load_settins_to_form(settings) {
             });
         }
 
+        if (settings.injectjs.length) {
+            settings.injectjs.forEach((d) => {
+                injectjs_new_with_value(d);
+            });
+        }
+
+        if (settings.checkall.length) {
+            settings.checkall.forEach((d) => {
+                checkall_new_with_value(d);
+            });
+        }
+
         initai_captcha();
         initai_autofill();
         initai_autocheck();
+        initai_injectjs();
+        initai_checkall();
     } else {
         console.log('no settings found');
     }
@@ -95,6 +105,8 @@ function maxbot_reset_api() {
     captcha_reset();
     autofill_reset();
     autocheck_reset();
+    injectjs_reset();
+    checkall_reset();
 
     let api_url = "http://127.0.0.1:16888/reset";
     $.get(api_url, function() {
@@ -234,6 +246,43 @@ function get_captcha_array() {
     return captcha;
 }
 
+function get_injectjs_array() {
+    let injectjs = [];
+    let last_node = $("#injectjs-container tr[data-index]").last().attr("data-index");
+    let node = 0;
+    if (last_node) {
+        node = parseInt(last_node);
+    }
+    if (node > 0) {
+        for (let i = 1; i <= node; i++) {
+            let item = {};
+            item["enable"] = true;
+            item["url"] = $("#injectjs_url_" + i).val();
+            item["script"] = $("#injectjs_script_" + i).val();
+            injectjs.push(item);
+        }
+    }
+    return injectjs;
+}
+
+function get_checkall_array() {
+    let checkall = [];
+    let last_node = $("#checkall-container tr[data-index]").last().attr("data-index");
+    let node = 0;
+    if (last_node) {
+        node = parseInt(last_node);
+    }
+    if (node > 0) {
+        for (let i = 1; i <= node; i++) {
+            let item = {};
+            item["enable"] = true;
+            item["url"] = $("#checkall_url_" + i).val();
+            checkall.push(item);
+        }
+    }
+    return checkall;
+}
+
 function save_changes_to_dict(silent_flag) {
     if (settings) {
 
@@ -252,15 +301,11 @@ function save_changes_to_dict(silent_flag) {
 
         settings.advanced.remote_url = remote_url_string;
 
-        let checkall_keyword_string = checkall_keyword.value;
-        if (checkall_keyword_string.indexOf('"') == -1) {
-            checkall_keyword_string = '"' + checkall_keyword_string + '"';
-        }
-        settings.advanced.checkall_keyword = checkall_keyword_string;
-
         settings.ocr_captcha.captcha = get_captcha_array();
         settings.autofill = get_autofill_array();
         settings.autocheck = get_autocheck_array();
+        settings.injectjs = get_injectjs_array();
+        settings.checkall = get_checkall_array();
 
     }
     if (!silent_flag) {
@@ -349,6 +394,8 @@ exit_button.addEventListener('click', maxbot_shutdown_api);
 new_captcha_button.addEventListener('click', captcha_new);
 new_autofill_button.addEventListener('click', autofill_new);
 new_autocheck_button.addEventListener('click', autocheck_new);
+new_injectjs_button.addEventListener('click', injectjs_new);
+new_checkall_button.addEventListener('click', checkall_new);
 
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
 
@@ -476,5 +523,82 @@ function initai_autocheck() {
     let last_node = $("#autocheck-container tr[data-index]").last().attr("data-index");
     if (!last_node) {
         autocheck_new();
+    }
+}
+
+function injectjs_reset() {
+    let last_node = $("#injectjs-container tr[data-index]").remove();
+}
+
+function injectjs_new() {
+    injectjs_new_with_value();
+}
+
+function injectjs_new_with_value(item) {
+    let last_node = $("#injectjs-container tr[data-index]").last().attr("data-index");
+    let node = 1;
+    if (last_node) {
+        node = parseInt(last_node) + 1;
+    }
+    let html = $("#injectjs-template").html();
+    if (html) {
+        html = html.replace(/@node@/g, "" + node);
+        //console.log(html);
+        $("#injectjs-container").append(html);
+        $("#injectjs-actionbar").insertAfter($("#injectjs-container tr").last());
+
+        if (item) {
+            $("#injectjs_url_" + node).val(item["url"]);
+            $("#injectjs_script_" + node).val(item["script"]);
+        }
+    }
+}
+
+function injectjs_remove(node) {
+    $("#injectjs-container tr[data-index='" + node + "']").remove();
+}
+
+function initai_injectjs() {
+    let last_node = $("#injectjs-container tr[data-index]").last().attr("data-index");
+    if (!last_node) {
+        injectjs_new();
+    }
+}
+
+function checkall_reset() {
+    let last_node = $("#checkall-container tr[data-index]").remove();
+}
+
+function checkall_new() {
+    checkall_new_with_value();
+}
+
+function checkall_new_with_value(item) {
+    let last_node = $("#checkall-container tr[data-index]").last().attr("data-index");
+    let node = 1;
+    if (last_node) {
+        node = parseInt(last_node) + 1;
+    }
+    let html = $("#checkall-template").html();
+    if (html) {
+        html = html.replace(/@node@/g, "" + node);
+        //console.log(html);
+        $("#checkall-container").append(html);
+        $("#checkall-actionbar").insertAfter($("#checkall-container tr").last());
+
+        if (item) {
+            $("#checkall_url_" + node).val(item["url"]);
+        }
+    }
+}
+
+function checkall_remove(node) {
+    $("#checkall-container tr[data-index='" + node + "']").remove();
+}
+
+function initai_checkall() {
+    let last_node = $("#checkall-container tr[data-index]").last().attr("data-index");
+    if (!last_node) {
+        checkall_new();
     }
 }
