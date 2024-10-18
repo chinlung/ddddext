@@ -57,6 +57,8 @@ https://youtu.be/HpVG91j0lbI
 
 <code>python3 -m pip install -r requirement.txt</code>
 
+說明：Windows 作業系統要用 python 指令，不是 python3, macOS / Linux 作業系統由於可能有多個 python 版本的環境，所以才是使用 python3 指令。
+
 ### Step 4: 執行設定介面主桯式:
 
 <code>python3 start.py</code>
