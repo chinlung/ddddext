@@ -80,6 +80,18 @@ async def nodriver_goto_homepage(driver, config_dict):
         await tab.get_content()
     except Exception as e:
         pass
+
+    # access cookie
+    if len(config_dict["cookie"]) > 0:
+        try:
+            cookies  = await driver.cookies.get_all()
+            for each_cookie in config_dict["cookie"]:
+                new_cookie = cdp.network.CookieParam(each_cookie["key"], each_cookie["value"], domain=each_cookie["domain"], path="/", http_only=True, secure=True)
+                cookies.append(new_cookie)
+            await driver.cookies.set_all(cookies)
+        except Exception as e:
+            pass
+
     return tab
 
 
@@ -141,14 +153,74 @@ def get_maxbot_extension_path(extension_folder):
             #print("final path:", path)
     return config_filepath
 
+def push_injectjs_to_extension(config_dict, extension_path):
+    manifest_filepath = os.path.join(extension_path, "manifest.json")
+    js_folder = os.path.join(extension_path, "js")
+    #print("manifest_filepath:", manifest_filepath)
+    manifest_dict = None
+    try:
+        with open(manifest_filepath) as json_data:
+            manifest_dict = json.load(json_data)
+            #print(manifest_dict)
+    except Exception as e:
+        print("error on open file")
+        print(e)
+        pass
+
+    if not manifest_dict is None:
+        clean_scripts_dict_array = []
+        for each_content_scripts in manifest_dict["content_scripts"]:
+            is_clean = True
+            for each_js in each_content_scripts["js"]:
+                if each_js.startswith("js/tmp_"):
+                    is_clean = False
+                    break
+            if is_clean:
+                clean_scripts_dict_array.append(each_content_scripts)
+        #print(clean_scripts_dict_array)
+
+        if "injectjs" in config_dict:
+            if len(config_dict["injectjs"]) > 0:
+                js_index = 0
+                for each_injectjs in config_dict["injectjs"]:
+                    js_index += 1
+                    js_filename = "tmp_" + str(js_index) + ".js"
+                    script_url = each_injectjs["url"]
+                    script_text = each_injectjs["script"]
+                    if each_injectjs["enable"] and len(script_url) > 0 and len(script_text) > 0:
+                        content_scripts_dict = {}
+                        content_scripts_dict["matches"] = [script_url]
+                        content_scripts_dict["run_at"] = each_injectjs["run_at"]
+                        content_scripts_dict["world"] = each_injectjs["world"]
+                        content_scripts_dict["js"] = ["jquery.min.js","js/common.js", "js/" + js_filename]
+
+                        js_filepath = os.path.join(js_folder, js_filename)
+                        print("js_filepath:", js_filepath)
+                        try:
+                            with open(js_filepath, "w") as text_file:
+                                text_file.write(script_text)
+                        except Exception as e:
+                            print(e)
+                            pass                        
+                        clean_scripts_dict_array.append(content_scripts_dict)
+
+        manifest_dict["content_scripts"] = clean_scripts_dict_array
+
+
+        util.save_json(manifest_dict, manifest_filepath)
+
+
 def get_extension_config(config_dict):
     default_lang = "zh-TW"
     no_sandbox=True
     browser_args = get_nodriver_browser_args()
+    if len(config_dict["advanced"]["proxy_server_port"]) > 2:
+        browser_args.append('--proxy-server=%s' % config_dict["advanced"]["proxy_server_port"])
     conf = Config(browser_args=browser_args, lang=default_lang, no_sandbox=no_sandbox)
     if config_dict["advanced"]["chrome_extension"]:
         ext = get_maxbot_extension_path(CONST_DDDDEXT_EXTENSION_NAME)
         if len(ext) > 0:
+            push_injectjs_to_extension(config_dict, ext)
             conf.add_extension(ext)
             util.dump_settings_to_maxbot_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG_FILE)
     return conf

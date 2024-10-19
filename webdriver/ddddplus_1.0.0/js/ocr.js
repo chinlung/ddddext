@@ -102,15 +102,15 @@ function ocr_main(settings) {
     if (settings) {
         let remote_url_string = get_remote_url(settings);
 
-        if (settings.ocr_captcha.captcha.length) {
+        if (settings.ocr_captcha.enable && settings.ocr_captcha.captcha.length) {
             settings.ocr_captcha.captcha.forEach((d) => {
                 //console.log(d);
                 let is_match_url = false;
                 if (d.enable) {
                     if (d.url == "") {
-                        is_match_url = true;
+                        is_match_url = false;
                     } else {
-                        if (document.location.href.indexOf(d.url) > -1) {
+                        if (wildcardMatchRegExp(document.location.href, d.url)) {
                             is_match_url = true;
                         }
                     }
@@ -151,9 +151,9 @@ function ocr_main(settings) {
                 let is_match_url = false;
                 if (d.enable) {
                     if (d.url == "") {
-                        is_match_url = true;
+                        is_match_url = false;
                     } else {
-                        if (document.location.href.indexOf(d.url) > -1) {
+                        if (wildcardMatchRegExp(document.location.href, d.url)) {
                             is_match_url = true;
                         }
                     }
@@ -175,9 +175,9 @@ function ocr_main(settings) {
                 let is_match_url = false;
                 if (d.enable) {
                     if (d.url == "") {
-                        is_match_url = true;
+                        is_match_url = false;
                     } else {
-                        if (document.location.href.indexOf(d.url) > -1) {
+                        if (wildcardMatchRegExp(document.location.href, d.url)) {
                             is_match_url = true;
                         }
                     }
@@ -231,30 +231,35 @@ function wildcardMatchRegExp(text, pattern) {
     return regexPattern.test(text);
 }
 
+function run_injectjs(settings) {
+    settings.injectjs.forEach((d) => {
+        //console.log(d);
+        let is_match_url = false;
+        if (d.enable) {
+            if (d.url == "") {
+                is_match_url = true;
+            } else {
+                is_match_url = wildcardMatchRegExp(document.location.href, d.url);
+            }
+        }
+        //console.log(d.url);
+        //console.log(is_match_url);
+        if (is_match_url && d.script.length) {
+            // Error handling response: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy
+            // eval(d.script);
+            webdriver_location_eval(settings, d.script, document.location.href);
+        }
+    });
+}
+
 console.log('start ocr.js');
 
 storage.get('settings', function(items) {
     if (items.settings) {
         settings = items.settings;
         if (settings) {
-            settings.injectjs.forEach((d) => {
-                //console.log(d);
-                let is_match_url = false;
-                if (d.enable) {
-                    if (d.url == "") {
-                        is_match_url = true;
-                    } else {
-                        is_match_url = wildcardMatchRegExp(document.location.href, d.url);
-                    }
-                }
-                //console.log(d.url);
-                //console.log(is_match_url);
-                if (is_match_url && d.script.length) {
-                    // Error handling response: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy
-                    // eval(d.script);
-                    webdriver_location_eval(settings, d.script, document.location.href);
-                }
-            });
+            // generate js to chrome extension to fix unsafe-eval.
+            // run_injectjs(settings);
         }
     }
 });

@@ -8,6 +8,7 @@ const new_captcha_button = document.querySelector('#new_captcha_btn');
 const new_autofill_button = document.querySelector('#new_autofill_btn');
 const new_autocheck_button = document.querySelector('#new_autocheck_btn');
 const new_injectjs_button = document.querySelector('#new_injectjs_btn');
+const new_cookie_button = document.querySelector('#new_cookie_btn');
 const new_checkall_button = document.querySelector('#new_checkall_btn');
 
 // preference
@@ -15,9 +16,10 @@ const homepage = document.querySelector('#homepage');
 const refresh_datetime = document.querySelector('#refresh_datetime');
 
 // advance
+const proxy_server_port = document.querySelector('#proxy_server_port');
 const window_size = document.querySelector('#window_size');
 
-
+const ocr_captcha_enable = document.querySelector('#ocr_captcha_enable');
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
 const remote_url = document.querySelector('#remote_url');
 const PUBLIC_SERVER_URL = "http://maxbot.dropboxlike.com:16888/";
@@ -30,7 +32,11 @@ function load_settins_to_form(settings) {
     if (settings) {
         homepage.value = settings.homepage;
         refresh_datetime.value = settings.refresh_datetime;
+
+        proxy_server_port.value = settings.advanced.proxy_server_port;
         window_size.value = settings.advanced.window_size;
+
+        ocr_captcha_enable.checked = settings.ocr_captcha.enable;
 
         let remote_url_string = "";
         let remote_url_array = [];
@@ -66,6 +72,12 @@ function load_settins_to_form(settings) {
             });
         }
 
+        if (settings.cookie.length) {
+            settings.cookie.forEach((d) => {
+                cookie_new_with_value(d);
+            });
+        }
+
         if (settings.checkall.length) {
             settings.checkall.forEach((d) => {
                 checkall_new_with_value(d);
@@ -76,6 +88,7 @@ function load_settins_to_form(settings) {
         initai_autofill();
         initai_autocheck();
         initai_injectjs();
+        initai_cookie();
         initai_checkall();
     } else {
         console.log('no settings found');
@@ -106,6 +119,7 @@ function maxbot_reset_api() {
     autofill_reset();
     autocheck_reset();
     injectjs_reset();
+    cookie_reset();
     checkall_reset();
 
     let api_url = "http://127.0.0.1:16888/reset";
@@ -259,10 +273,35 @@ function get_injectjs_array() {
             item["enable"] = true;
             item["url"] = $("#injectjs_url_" + i).val();
             item["script"] = $("#injectjs_script_" + i).val();
+            item["run_at"] = "document_end";
+            item["world"] = "ISOLATED";
             injectjs.push(item);
         }
     }
     return injectjs;
+}
+
+function get_cookie_array() {
+    let cookie = [];
+    let last_node = $("#cookie-container tr[data-index]").last().attr("data-index");
+    let node = 0;
+    if (last_node) {
+        node = parseInt(last_node);
+    }
+    if (node > 0) {
+        for (let i = 1; i <= node; i++) {
+            let item = {};
+            item["enable"] = true;
+            item["domain"] = $("#cookie_domain_" + i).val();
+            item["key"] = $("#cookie_key_" + i).val();
+            item["value"] = $("#cookie_value_" + i).val();
+            item["path"] = "/";
+            item["http_only"] = true;
+            item["secure"] = true;
+            cookie.push(item);
+        }
+    }
+    return cookie;
 }
 
 function get_checkall_array() {
@@ -290,8 +329,10 @@ function save_changes_to_dict(silent_flag) {
         settings.homepage = homepage.value;
         settings.refresh_datetime = refresh_datetime.value;
         // advanced
+        settings.advanced.proxy_server_port = proxy_server_port.value;
         settings.advanced.window_size = window_size.value;
 
+        settings.ocr_captcha.enable = ocr_captcha_enable.checked;
         let remote_url_array = [];
         remote_url_array.push(remote_url.value);
         let remote_url_string = JSON.stringify(remote_url_array);
@@ -305,6 +346,7 @@ function save_changes_to_dict(silent_flag) {
         settings.autofill = get_autofill_array();
         settings.autocheck = get_autocheck_array();
         settings.injectjs = get_injectjs_array();
+        settings.cookie = get_cookie_array();
         settings.checkall = get_checkall_array();
 
     }
@@ -351,6 +393,7 @@ function check_unsaved_fields() {
         });
         const field_list_advance = [
             "remote_url",
+            "proxy_server_port",
             "window_size"
         ];
         field_list_advance.forEach(f => {
@@ -395,6 +438,7 @@ new_captcha_button.addEventListener('click', captcha_new);
 new_autofill_button.addEventListener('click', autofill_new);
 new_autocheck_button.addEventListener('click', autocheck_new);
 new_injectjs_button.addEventListener('click', injectjs_new);
+new_cookie_button.addEventListener('click', cookie_new);
 new_checkall_button.addEventListener('click', checkall_new);
 
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
@@ -562,6 +606,46 @@ function initai_injectjs() {
     let last_node = $("#injectjs-container tr[data-index]").last().attr("data-index");
     if (!last_node) {
         injectjs_new();
+    }
+}
+
+function cookie_reset() {
+    let last_node = $("#cookie-container tr[data-index]").remove();
+}
+
+function cookie_new() {
+    cookie_new_with_value();
+}
+
+function cookie_new_with_value(item) {
+    let last_node = $("#cookie-container tr[data-index]").last().attr("data-index");
+    let node = 1;
+    if (last_node) {
+        node = parseInt(last_node) + 1;
+    }
+    let html = $("#cookie-template").html();
+    if (html) {
+        html = html.replace(/@node@/g, "" + node);
+        //console.log(html);
+        $("#cookie-container").append(html);
+        $("#cookie-actionbar").insertAfter($("#cookie-container tr").last());
+
+        if (item) {
+            $("#cookie_key_" + node).val(item["key"]);
+            $("#cookie_value_" + node).val(item["value"]);
+            $("#cookie_domain_" + node).val(item["domain"]);
+        }
+    }
+}
+
+function cookie_remove(node) {
+    $("#cookie-container tr[data-index='" + node + "']").remove();
+}
+
+function initai_cookie() {
+    let last_node = $("#cookie-container tr[data-index]").last().attr("data-index");
+    if (!last_node) {
+        cookie_new();
     }
 }
 

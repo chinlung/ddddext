@@ -26,12 +26,21 @@
                 <button aria-controls="readme-tab-pane" aria-selected="true" class="nav-link active" data-bs-target="#readme-tab-pane" data-bs-toggle="tab" id="readme-tab" role="tab" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
                         <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
-                    </svg> 使用需知</button>
+                    </svg> 使用需知 </button>
             </li>
-            <li class="nav-item" role="presentation">
+            <!-- li class="nav-item" role="presentation">
                 <button aria-controls="home-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#home-tab-pane" data-bs-toggle="tab" id="home-tab" role="tab" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
                         <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
                     </svg> 偏好設定</button>
+            </li -->
+            <li class="nav-item" role="presentation">
+                <button aria-controls="ocr-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#ocr-tab-pane" data-bs-toggle="tab" id="ocr-tab" role="tab" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-qr-code-scan" viewBox="0 0 16 16">
+                        <path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5M.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5M4 4h1v1H4z" />
+                        <path d="M7 2H2v5h5zM3 3h3v3H3zm2 8H4v1h1z" />
+                        <path d="M7 9H2v5h5zm-4 1h3v3H3zm8-6h1v1h-1z" />
+                        <path d="M9 2h5v5H9zm1 1v3h3V3zM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8zm2 2H9V9h1zm4 2h-1v1h-2v1h3zm-4 2v-1H8v1z" />
+                        <path d="M12 9h2V8h-2z" />
+                    </svg> OCR</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button aria-controls="autofill-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#autofill-tab-pane" data-bs-toggle="tab" id="autofill-tab" role="tab" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key" viewBox="0 0 16 16">
@@ -95,6 +104,19 @@
             </div>
             <!-- tab 2 -->
             <div aria-labelledby="home-tab" class="tab-pane fade" id="home-tab-pane" role="tabpanel" tabindex="0">
+            </div>
+            <!-- tab 3 -->
+            <div aria-labelledby="ocr-tab" class="tab-pane fade" id="ocr-tab-pane" role="tabpanel" tabindex="0">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label form-check-label" for="ocr_captcha_enable">DDDD OCR</label>
+                    <div class="col-sm-10">
+                        <input class="form-check-input" type="checkbox" id="ocr_captcha_enable" />
+                        <div class="bd-callout bd-callout-info">
+                            <strong>說明：</strong>
+                            關閉 DDDD OCR 功能並不會影響其他功能，例如：「自動填表單」、「自動打勾」、「注入 Javascript」。
+                        </div>
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label" for="remote_url">
                         OCR Server URL
@@ -111,6 +133,7 @@
                         <input class="form-check-input" id="ocr_captcha_use_public_server" type="checkbox" />
                     </div>
                 </div>
+                <hr />
                 <table class="table">
                     <thead>
                         <tr>
@@ -118,7 +141,7 @@
                                 #
                             </th>
                             <th scope="col">
-                                驗證碼網址關鍵字
+                                驗證碼網址
                             </th>
                             <th scope="col">
                                 驗證碼圖片 selector
@@ -145,9 +168,19 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="bd-callout bd-callout-info">
+                    <strong>說明：</strong>
+                    <ul>
+                        <li>「<code>驗證碼網址</code>」可以使用萬用字元 <code>*</code> 符號。</li>
+                        <li>「<code>驗證碼網址</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
+                    </ul>
+                </div>
             </div>
-            <!-- tab 3 -->
+            <!-- tab 4 -->
             <div aria-labelledby="autofill-tab" class="tab-pane fade" id="autofill-tab-pane" role="tabpanel" tabindex="2">
+                <p>針對不同的網頁內容，在自動填入內容時，會需要不同的設定值(selector)，selector 使用方式請參考個案教學：<br/>
+                    <a href='https://ddddext.max-everyday.com/case/' target="_blank">https://ddddext.max-everyday.com/case/</a> (另開新視窗)
+                </p>
                 <table class="table">
                     <thead>
                         <tr>
@@ -155,7 +188,7 @@
                                 #
                             </th>
                             <th scope="col">
-                                自動輸入網址關鍵字
+                                自動輸入網址
                             </th>
                             <th scope="col">
                                 自動輸入欄位selector
@@ -179,10 +212,17 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="bd-callout bd-callout-info">
+                    <strong>說明：</strong>
+                    <ul>
+                        <li>「<code>自動輸入網址</code>」可以使用萬用字元 <code>*</code> 符號。</li>
+                        <li>「<code>自動輸入網址</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
+                    </ul>
+                </div>
             </div>
-            <!-- tab 4 -->
+            <!-- tab 5 -->
             <div aria-labelledby="autocheck-tab" class="tab-pane fade" id="autocheck-tab-pane" role="tabpanel" tabindex="2">
-                <div>自動打勾所有checkbox的網址關鍵字</div>
+                <div>自動打勾「所有」checkbox的網址關鍵字</div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -217,7 +257,7 @@
                     </ul>
                 </div>
                 <hr />
-                <p>如果需要指定 selector 的內容是要「勾選」，還是「取消勾選」，請使用下列功能。</p>
+                <p>如果需要勾選/取消勾選「指定」selector的內容是要，請使用下列功能。</p>
                 <table class="table">
                     <thead>
                         <tr>
@@ -225,7 +265,7 @@
                                 #
                             </th>
                             <th scope="col">
-                                自動輸入網址關鍵字
+                                自動輸入網址
                             </th>
                             <th scope="col">
                                 自動輸入欄位selector
@@ -249,6 +289,13 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="bd-callout bd-callout-info">
+                    <strong>說明：</strong>
+                    <ul>
+                        <li>「<code>自動輸入網址</code>」可以使用萬用字元 <code>*</code> 符號。</li>
+                        <li>「<code>自動輸入網址</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-12">

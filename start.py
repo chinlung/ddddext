@@ -41,6 +41,7 @@ except Exception as exc:
 
 CONST_APP_VERSION = "DDDDEXT (2024.04.20)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
+CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
 CONST_SERVER_PORT = 16888
 CONST_HOMEPAGE_DEFAULT = "about:blank"
 
@@ -74,6 +75,7 @@ def get_default_config():
     config_dict['autofill']=[]
     config_dict['autocheck']=[]
     config_dict['injectjs']=[]
+    config_dict['cookie']=[]
     config_dict['checkall']=[]
 
     return config_dict
@@ -135,10 +137,19 @@ def launch_maxbot():
 
 def clean_tmp_file():
     Root_Dir = util.get_app_root()
-    target_folder = os.listdir(Root_Dir)
-    for item in target_folder:
+    target_folder_list = os.listdir(Root_Dir)
+    for item in target_folder_list:
         if item.endswith(".tmp"):
             os.remove(os.path.join(Root_Dir, item))
+
+    # clean generated javascript.
+    webdriver_folder = os.path.join(Root_Dir, "webdriver")
+    extension_folder = os.path.join(webdriver_folder, CONST_DDDDEXT_EXTENSION_NAME)
+    js_folder = os.path.join(extension_folder, "js")
+    js_folder_list = os.listdir(js_folder)
+    for item in js_folder_list:
+        if item.startswith("tmp_"):
+            os.remove(os.path.join(js_folder, item))
 
 class HomepageHandler(tornado.web.RequestHandler):
     def get(self):

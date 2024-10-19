@@ -6,6 +6,7 @@ const new_autofill_button = document.querySelector('#new_autofill_btn');
 const new_autocheck_button = document.querySelector('#new_autocheck_btn');
 const new_checkall_button = document.querySelector('#new_checkall_btn');
 
+const ocr_captcha_enable = document.querySelector('#ocr_captcha_enable');
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
 const remote_url = document.querySelector('#remote_url');
 
@@ -121,6 +122,7 @@ async function saveChanges()
         
         settings.advanced.remote_url = remote_url_string;
 
+        settings.ocr_captcha.enable = ocr_captcha_enable.checked;
         settings.ocr_captcha.captcha = get_captcha_array();
         settings.autofill = get_autofill_array();
         settings.autocheck = get_autocheck_array();
@@ -157,6 +159,8 @@ function loadChanges()
                 remote_url_string = remote_url_array[0];
             }
             remote_url.value = remote_url_string;
+
+            ocr_captcha_enable.checked = settings.ocr_captcha.enable;
 
             if(settings.ocr_captcha.captcha.length) {
                 settings.ocr_captcha.captcha.forEach((d)=> {
