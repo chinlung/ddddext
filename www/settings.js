@@ -380,6 +380,23 @@ function maxbot_save() {
     maxbot_save_api();
 }
 
+function ddddext_version_api()
+{
+    let api_url = "http://127.0.0.1:16888/version";
+    $.get( api_url, function() {
+        //alert( "success" );
+    })
+    .done(function(data) {
+        $("#ddddext_version").html(data.version);
+    })
+    .fail(function() {
+        //alert( "error" );
+    })
+    .always(function() {
+        //alert( "finished" );
+    });
+}
+
 function check_unsaved_fields() {
     if (settings) {
         const field_list_basic = ["homepage", "refresh_datetime"];
@@ -428,6 +445,8 @@ function check_unsaved_fields() {
         });
     }
 }
+
+ddddext_version_api();
 
 run_button.addEventListener('click', maxbot_launch);
 save_button.addEventListener('click', maxbot_save);
