@@ -31,7 +31,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.21)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.22)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -195,7 +195,7 @@ def push_injectjs_to_extension(config_dict, extension_path):
                         content_scripts_dict["js"] = ["jquery.min.js","js/common.js", "js/" + js_filename]
 
                         js_filepath = os.path.join(js_folder, js_filename)
-                        print("js_filepath:", js_filepath)
+                        #print("js_filepath:", js_filepath)
                         try:
                             with open(js_filepath, "w") as text_file:
                                 text_file.write(script_text)
@@ -370,6 +370,8 @@ async def check_refresh_datetime_occur(driver, target_time):
 async def sendkey_to_browser(driver, config_dict, url):
     tmp_filepath = ""
     if "token" in config_dict:
+        #print("url:", url)
+        #print("token:", config_dict["token"])
         app_root = util.get_app_root()
         tmp_file = config_dict["token"] + "_sendkey.tmp"
         tmp_filepath = os.path.join(app_root, tmp_file)
@@ -379,7 +381,8 @@ async def sendkey_to_browser(driver, config_dict, url):
         try:
             with open(tmp_filepath) as json_data:
                 sendkey_dict = json.load(json_data)
-                print(sendkey_dict)
+                #print("url:", url)
+                #print(sendkey_dict)
         except Exception as e:
             print("error on open file")
             print(e)
@@ -503,6 +506,7 @@ async def eval_to_browser_exist(tab, eval_dict, url):
 async def main(args):
     config_dict = get_config_dict(args)
     config_dict["token"] = util.get_token()
+    #print("current token:", config_dict["token"])
 
     driver = None
     tab = None

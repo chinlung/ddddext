@@ -3,6 +3,7 @@
 import asyncio
 import base64
 import json
+import logging
 import os
 import platform
 import subprocess
@@ -11,10 +12,13 @@ import threading
 import time
 import webbrowser
 from datetime import datetime
+import ssl
+import warnings
 
 import tornado
 from tornado.web import Application
 from tornado.web import StaticFileHandler
+from urllib3.exceptions import InsecureRequestWarning
 
 import util
 from typing import (
@@ -39,11 +43,16 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.21)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.22)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
 CONST_SERVER_PORT = 16888
 CONST_HOMEPAGE_DEFAULT = "about:blank"
+
+warnings.simplefilter('ignore',InsecureRequestWarning)
+ssl._create_default_https_context = ssl._create_unverified_context
+logging.basicConfig()
+logger = logging.getLogger('logger')
 
 translate={}
 
@@ -52,6 +61,7 @@ def get_default_config():
 
     config_dict["homepage"] = CONST_HOMEPAGE_DEFAULT
     config_dict["refresh_datetime"] = ""
+    config_dict["memo"] = ""
 
     config_dict["ocr_captcha"] = {}
     config_dict["ocr_captcha"]["enable"] = True
@@ -187,6 +197,41 @@ class ResetJsonHandler(tornado.web.RequestHandler):
         util.save_json(config_dict, config_filepath)
         self.write(config_dict)
 
+class ImportJsonHandler(tornado.web.RequestHandler):
+    def post(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST')
+
+        config_dict = {}
+        _body = None
+        is_pass_check = True
+        errorMessage = ""
+        errorCode = 0
+
+        if is_pass_check:
+            is_pass_check = False
+            try :
+                _body = json.loads(self.request.body)
+                is_pass_check = True
+            except Exception:
+                errorMessage = "wrong json format"
+                errorCode = 1001
+                pass
+
+        if is_pass_check:
+            app_root = util.get_app_root()
+            if "url" in _body:
+                try:
+                    html_text = util.wget(_body["url"])
+                    config_dict = json.loads(html_text)
+                except Exception as exc:
+                    print("load json fail:")
+                    print(exc)
+                    pass    
+        self.write(config_dict)
+
+
 class SaveJsonHandler(tornado.web.RequestHandler):
     def post(self):
         _body = None
@@ -244,6 +289,7 @@ class SendkeyHandler(tornado.web.RequestHandler):
             if "token" in _body:
                 tmp_file = _body["token"] + "_sendkey.tmp"
                 config_filepath = os.path.join(app_root, tmp_file)
+                #print("json:", _body)
                 #print("tmp_file:", config_filepath)
                 util.save_json(_body, config_filepath)
 
@@ -352,6 +398,7 @@ async def main_server():
         ("/load", LoadJsonHandler),
         ("/save", SaveJsonHandler),
         ("/reset", ResetJsonHandler),
+        ("/import", ImportJsonHandler),
 
         ("/ocr", OcrHandler),
         ('/(.*)', StaticFileHandler, {"path": os.path.join(".", 'www/')}),

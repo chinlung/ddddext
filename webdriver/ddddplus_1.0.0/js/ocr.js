@@ -27,7 +27,7 @@ function get_ocr_image(captcha_selector) {
 var last_captcha_answer = "";
 chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
-    if(message.hasOwnProperty("answer")) {
+    if(message && message.hasOwnProperty("answer")) {
         if (message.answer.length == target_captcha_length) {
             set_ocr_answer(message.answer);
             last_captcha_answer = message.answer;

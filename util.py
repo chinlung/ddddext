@@ -218,6 +218,27 @@ def save_url_to_file(remote_url, CONST_MAXBOT_ANSWER_ONLINE_FILE, force_write = 
         write_string_to_file(target_path, html_text)
     return is_write_to_file
 
+def wget(url, headers=None):
+    html_text = None
+    html_result = None
+    #print("url:", url)
+
+    try:
+        if not headers is None:
+            html_result = requests.get(url , headers=headers, timeout=0.5, allow_redirects=False)
+        else:
+            html_result = requests.get(url , timeout=0.5, allow_redirects=False)
+    except Exception as exc:
+        html_result = None
+        print("send url request fail:")
+        print(exc)
+
+    if not html_result is None:
+        status_code = html_result.status_code
+        #print("status_code:",status_code)
+        if status_code == 200:
+            html_text = html_result.text
+    return html_text
 
 def play_mp3_async(sound_filename):
     threading.Thread(target=play_mp3, args=(sound_filename,)).start()

@@ -72,6 +72,11 @@
                         <path d="M8 0a7.96 7.96 0 0 0-4.075 1.114q-.245.102-.437.28A8 8 0 1 0 8 0m3.25 14.201a1.5 1.5 0 0 0-2.13.71A7 7 0 0 1 8 15a6.97 6.97 0 0 1-3.845-1.15 1.5 1.5 0 1 0-2.005-2.005A6.97 6.97 0 0 1 1 8c0-1.953.8-3.719 2.09-4.989a1.5 1.5 0 1 0 2.469-1.574A7 7 0 0 1 8 1c1.42 0 2.742.423 3.845 1.15a1.5 1.5 0 1 0 2.005 2.005A6.97 6.97 0 0 1 15 8c0 .596-.074 1.174-.214 1.727a1.5 1.5 0 1 0-1.025 2.25 7 7 0 0 1-2.51 2.224Z" />
                     </svg> cookie</button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button aria-controls="memo-tab-pane" aria-selected="false" class="nav-link" data-bs-target="#memo-tab-pane" data-bs-toggle="tab" id="memo-tab" role="tab" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-book" viewBox="0 0 16 16">
+                        <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
+                    </svg> 備註</button>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <!-- tab 1 -->
@@ -155,9 +160,14 @@
                     </div>
                 </div>
                 <div class="row">
-                  <label for="ddddext_version" class="col-sm-2 col-form-label">版本</label>
-                  <div class="col-sm-10"><p id="ddddext_version" class="text-secondary mt-2"></p>
-                  </div>
+                    <label for="ddddext_version" class="col-sm-2 col-form-label">版本</label>
+                    <div class="col-sm-10">
+                        <p id="ddddext_version" class="text-secondary mt-2"></p>
+                        <div class="bd-callout bd-callout-info">
+                            <strong>說明：</strong>
+                            按下「搶票」後所開出的瀏覽器，可能只有最後一個開出的視窗裡的功能才會都是正常的；換句話說，雖然可以多開，但只有最後一個瀏覽器才能與 nodriver 溝通。
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- tab 3 -->
@@ -189,7 +199,7 @@
                     </div>
                 </div>
                 <hr />
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -236,7 +246,7 @@
                 <p>針對不同的網頁內容，在自動填入內容時，會需要不同的設定值(selector)，selector 使用方式請參考個案教學：<br />
                     <a href='https://ddddext.max-everyday.com/case/' target="_blank">https://ddddext.max-everyday.com/case/</a> (另開新視窗)
                 </p>
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -278,7 +288,7 @@
             <!-- tab 5 -->
             <div aria-labelledby="autocheck-tab" class="tab-pane fade" id="autocheck-tab-pane" role="tabpanel" tabindex="2">
                 <div>自動打勾「所有」checkbox的網址關鍵字</div>
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -313,7 +323,7 @@
                 </div>
                 <hr />
                 <p>如果需要勾選/取消勾選「指定」selector的內容是要，請使用下列功能。</p>
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -354,7 +364,7 @@
             </div>
             <!-- tab 6 -->
             <div aria-labelledby="injectjs-tab" class="tab-pane fade" id="injectjs-tab-pane" role="tabpanel" tabindex="2">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -390,7 +400,7 @@
             </div>
             <!-- tab 7 -->
             <div aria-labelledby="cookie-tab" class="tab-pane fade" id="cookie-tab-pane" role="tabpanel" tabindex="2">
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">
@@ -430,6 +440,11 @@
                     </ul>
                 </div>
             </div>
+            <!-- tab 9 -->
+            <div aria-labelledby="memo-tab" class="tab-pane fade" id="memo-tab-pane" role="tabpanel" tabindex="2">
+                <p>針對目前設定檔的補充說明：</p>
+                <textarea class="form-control" id="memo" rows="20"></textarea>
+            </div>
         </div>
         <div class="col-12">
             <button class="btn btn-primary" id="run_btn">
@@ -441,244 +456,276 @@
             <button class="btn btn-primary" id="reset_btn">
                 重設為預設值
             </button>
+            <button class="btn btn-primary" id="import_btn">
+                匯入
+            </button>
             <button class="btn btn-danger" id="exit_btn">
                 結束
             </button>
         </div>
+        <div class="col-12">
+            <span class="text-danger" id="run_btn_pressed_message"></span>
+        </div>
+    </div>
+    <div class="modal" id="message_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="message_modal_title">
+                        MaxBot
+                    </h2>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="message_detail">
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">
+                        關閉
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- import_modal -->
+    <div class="modal fade" id="importJsonModal" tabindex="-1" aria-labelledby="importJsonModalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">匯入設定值</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-12 mb-3">
+                        <label for="json_url" class="form-label">JSON 設定值網址</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="json_url" placeholder="JSON 設定值網址" required="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-primary" id='json-import-btn' onclick="json_import();">
+                        <span id="json-import-btn-title">匯入</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /import_modal -->
+    <div class="disappear">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        #
+                    </th>
+                    <th scope="col">
+                        網址關鍵字
+                    </th>
+                    <th scope="col">
+                        欄位selector
+                    </th>
+                    <th scope="col">
+                        欄位填入值
+                    </th>
+                    <th scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="autofill-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="autofill_url_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="autofill_selector_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="autofill_value_@node@" value="" />
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="autofill_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        #
+                    </th>
+                    <th scope="col">
+                        網址關鍵字
+                    </th>
+                    <th scope="col">
+                        欄位selector
+                    </th>
+                    <th scope="col">
+                        欄位填入值
+                    </th>
+                    <th scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="autocheck-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="autocheck_url_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="autocheck_selector_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-check-input" type="checkbox" id="autocheck_value_@node@" value="" />
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="autocheck_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        #
+                    </th>
+                    <th scope="col">
+                        網址關鍵字
+                    </th>
+                    <th scope="col">
+                        captcha selector
+                    </th>
+                    <th scope="col">
+                        input selector
+                    </th>
+                    <th scope="col">
+                        captcha length
+                    </th>
+                    <th scope="col">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="captcha-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="captcha_url_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="captcha_selector_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="input_selector_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="maxlength_@node@" value="4" />
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="disappear">
+        <table class="table table-striped">
+            <tbody id="injectjs-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-check-label" for="injectjs_url_@node@">
+                                matches URL
+                            </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="injectjs_url_@node@" value="" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-check-label" for="injectjs_script_@node@">
+                                Javascript
+                            </label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="injectjs_script_@node@" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="injectjs_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="disappear">
+        <table class="table table-striped">
+            <tbody id="cookie-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="cookie_key_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="cookie_value_@node@" value="" />
+                    </td>
+                    <td>
+                        <input class="form-control" id="cookie_domain_@node@" value="" />
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="cookie_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="disappear">
+        <table class="table table-striped">
+            <tbody id="checkall-template">
+                <tr data-index="@node@">
+                    <th scope="row">
+                        @node@
+                    </th>
+                    <td>
+                        <input class="form-control" id="checkall_url_@node@" value="" />
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="checkall_remove(@node@);" type="button">
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <script src="settings.js">
     </script>
 </body>
-<div class="modal" id="message_modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title fs-5" id="message_modal_title">
-                    MaxBot
-                </h2>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button">
-                </button>
-            </div>
-            <div class="modal-body">
-                <p id="message_detail">
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">
-                    關閉
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="disappear">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">
-                    #
-                </th>
-                <th scope="col">
-                    網址關鍵字
-                </th>
-                <th scope="col">
-                    欄位selector
-                </th>
-                <th scope="col">
-                    欄位填入值
-                </th>
-                <th scope="col">
-                </th>
-            </tr>
-        </thead>
-        <tbody id="autofill-template">
-            <tr data-index="@node@">
-                <th scope="row">
-                    @node@
-                </th>
-                <td>
-                    <input class="form-control" id="autofill_url_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="autofill_selector_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="autofill_value_@node@" value="" />
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="autofill_remove(@node@);" type="button">
-                        刪除
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">
-                    #
-                </th>
-                <th scope="col">
-                    網址關鍵字
-                </th>
-                <th scope="col">
-                    欄位selector
-                </th>
-                <th scope="col">
-                    欄位填入值
-                </th>
-                <th scope="col">
-                </th>
-            </tr>
-        </thead>
-        <tbody id="autocheck-template">
-            <tr data-index="@node@">
-                <th scope="row">
-                    @node@
-                </th>
-                <td>
-                    <input class="form-control" id="autocheck_url_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="autocheck_selector_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-check-input" type="checkbox" id="autocheck_value_@node@" value="" />
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="autocheck_remove(@node@);" type="button">
-                        刪除
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">
-                    #
-                </th>
-                <th scope="col">
-                    網址關鍵字
-                </th>
-                <th scope="col">
-                    captcha selector
-                </th>
-                <th scope="col">
-                    input selector
-                </th>
-                <th scope="col">
-                    captcha length
-                </th>
-                <th scope="col">
-                </th>
-            </tr>
-        </thead>
-        <tbody id="captcha-template">
-            <tr data-index="@node@">
-                <th scope="row">
-                    @node@
-                </th>
-                <td>
-                    <input class="form-control" id="captcha_url_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="captcha_selector_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="input_selector_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="maxlength_@node@" value="4" />
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
-                        刪除
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div class="disappear">
-    <table>
-        <tbody id="injectjs-template">
-            <tr data-index="@node@">
-                <th scope="row">
-                    @node@
-                </th>
-                <td>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-check-label" for="injectjs_url_@node@">
-                            matches URL
-                        </label>
-                        <div class="col-sm-10">
-                            <input class="form-control" id="injectjs_url_@node@" value="" />
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-check-label" for="injectjs_script_@node@">
-                            Javascript
-                        </label>
-                        <div class="col-sm-10">
-                            <textarea class="form-control" id="injectjs_script_@node@" rows="4"></textarea>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="injectjs_remove(@node@);" type="button">
-                        刪除
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div class="disappear">
-    <table>
-        <tbody id="cookie-template">
-            <tr data-index="@node@">
-                <th scope="row">
-                    @node@
-                </th>
-                <td>
-                    <input class="form-control" id="cookie_key_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="cookie_value_@node@" value="" />
-                </td>
-                <td>
-                    <input class="form-control" id="cookie_domain_@node@" value="" />
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="cookie_remove(@node@);" type="button">
-                        刪除
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div class="disappear">
-    <table>
-        <tbody id="checkall-template">
-            <tr data-index="@node@">
-                <th scope="row">
-                    @node@
-                </th>
-                <td>
-                    <input class="form-control" id="checkall_url_@node@" value="" />
-                </td>
-                <td>
-                    <button class="btn btn-danger" onclick="checkall_remove(@node@);" type="button">
-                        刪除
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
 </html>

@@ -2,6 +2,7 @@
 const run_button = document.querySelector('#run_btn');
 const save_button = document.querySelector('#save_btn');
 const reset_button = document.querySelector('#reset_btn');
+const import_button = document.querySelector('#import_btn');
 const exit_button = document.querySelector('#exit_btn');
 
 const new_captcha_button = document.querySelector('#new_captcha_btn');
@@ -14,6 +15,7 @@ const new_checkall_button = document.querySelector('#new_checkall_btn');
 // preference
 const homepage = document.querySelector('#homepage');
 const refresh_datetime = document.querySelector('#refresh_datetime');
+const memo = document.querySelector('#memo');
 
 // advance
 const proxy_server_port = document.querySelector('#proxy_server_port');
@@ -24,6 +26,8 @@ const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_p
 const remote_url = document.querySelector('#remote_url');
 const PUBLIC_SERVER_URL = "http://maxbot.dropboxlike.com:16888/";
 
+const json_url = document.querySelector('#json_url');
+
 var settings = null;
 
 maxbot_load_api();
@@ -32,6 +36,7 @@ function load_settins_to_form(settings) {
     if (settings) {
         homepage.value = settings.homepage;
         refresh_datetime.value = settings.refresh_datetime;
+        memo.value = settings.memo;
 
         proxy_server_port.value = settings.advanced.proxy_server_port;
         window_size.value = settings.advanced.window_size;
@@ -127,11 +132,10 @@ function maxbot_reset_api() {
             //alert( "success" );
         })
         .done(function(data) {
-            //alert( "second success" );
             //console.log(data);
             settings = data;
             load_settins_to_form(data);
-            check_unsaved_fields();
+            run_message("已重設為預設值");
         })
         .fail(function() {
             //alert( "error" );
@@ -141,8 +145,56 @@ function maxbot_reset_api() {
         });
 }
 
+function maxbot_import_api() {
+    $("#importJsonModal").modal('show');
+    $("#json_url").val("");
+    $("#json-import-btn").addClass("disabled");
+}
+
 function checkUsePublicServer() {
     remote_url.value = PUBLIC_SERVER_URL;
+}
+
+function jon_url_onchange() {
+    let target_url = $("#json_url").val();
+    if(target_url.length > 0) {
+        $("#json-import-btn").removeClass("disabled");
+    } else {
+        $("#json-import-btn").addClass("disabled");
+    }
+}
+
+function json_import() {
+    $("#importJsonModal").modal('hide');
+    captcha_reset();
+    autofill_reset();
+    autocheck_reset();
+    injectjs_reset();
+    cookie_reset();
+    checkall_reset();
+
+    let target_url = $("#json_url").val();
+    const body = JSON.stringify(
+        {
+            url: target_url
+        }
+    );
+
+    let api_url = "http://127.0.0.1:16888/import";
+    $.post(api_url, body, function() {
+            //alert( "success" );
+        })
+        .done(function(data) {
+            console.log(data);
+            settings = data;
+            load_settins_to_form(data);
+        })
+        .fail(function() {
+            //alert( "error" );
+        })
+        .always(function() {
+            //alert( "finished" );
+        });    
 }
 
 let messageClearTimer;
@@ -162,6 +214,7 @@ function message_old(msg) {
 }
 
 function maxbot_launch() {
+    run_message("啟動 DDDDEXT 主程式中...");
     save_changes_to_dict(true);
     maxbot_save_api(maxbot_run_api());
 }
@@ -328,6 +381,8 @@ function save_changes_to_dict(silent_flag) {
         // preference
         settings.homepage = homepage.value;
         settings.refresh_datetime = refresh_datetime.value;
+        settings.memo = memo.value;
+
         // advanced
         settings.advanced.proxy_server_port = proxy_server_port.value;
         settings.advanced.window_size = window_size.value;
@@ -399,7 +454,7 @@ function ddddext_version_api()
 
 function check_unsaved_fields() {
     if (settings) {
-        const field_list_basic = ["homepage", "refresh_datetime"];
+        const field_list_basic = ["homepage", "refresh_datetime", "memo"];
         field_list_basic.forEach(f => {
             const field = document.querySelector('#' + f);
             if (field.value != settings[f]) {
@@ -451,6 +506,7 @@ ddddext_version_api();
 run_button.addEventListener('click', maxbot_launch);
 save_button.addEventListener('click', maxbot_save);
 reset_button.addEventListener('click', maxbot_reset_api);
+import_button.addEventListener('click', maxbot_import_api);
 exit_button.addEventListener('click', maxbot_shutdown_api);
 
 new_captcha_button.addEventListener('click', captcha_new);
@@ -461,6 +517,7 @@ new_cookie_button.addEventListener('click', cookie_new);
 new_checkall_button.addEventListener('click', checkall_new);
 
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
+json_url.addEventListener('input', jon_url_onchange);
 
 const onchange_tag_list = ["input", "select", "textarea"];
 onchange_tag_list.forEach((tag) => {
@@ -471,6 +528,25 @@ onchange_tag_list.forEach((tag) => {
 });
 
 homepage.addEventListener('keyup', check_unsaved_fields);
+
+let runMessageClearTimer;
+
+function run_message(msg) {
+    clearTimeout(runMessageClearTimer);
+    const message = document.querySelector('#run_btn_pressed_message');
+    message.innerText = msg;
+    messageClearTimer = setTimeout(function() {
+        message.innerText = '';
+    }, 3000);
+}
+
+const importJsonModal = document.getElementById('importJsonModal');
+importJsonModal.addEventListener('shown.bs.modal', () => {
+    const input_field = document.getElementById('json_url');
+    if(input_field!=null) {
+        input_field.focus();          
+    }
+});
 
 function captcha_reset() {
     let last_node = $("#captcha-container tr[data-index]").remove();

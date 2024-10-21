@@ -1,6 +1,7 @@
 {
     "homepage": "about:blank",
     "refresh_datetime": "",
+    "memo": "",
     "ocr_captcha": {
         "enable": true,
         "beta": true,
