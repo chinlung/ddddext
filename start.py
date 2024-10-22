@@ -6,44 +6,30 @@ import json
 import logging
 import os
 import platform
+import ssl
+import shutil
 import subprocess
 import sys
 import threading
 import time
+import warnings
 import webbrowser
 from datetime import datetime
-import ssl
-import warnings
+from typing import (Any, Awaitable, Callable, Dict, Generator, Iterable, List,
+                    Optional, Tuple, Type, TypeVar, Union, cast, overload)
 
 import tornado
-from tornado.web import Application
-from tornado.web import StaticFileHandler
+from tornado.web import Application, StaticFileHandler
 from urllib3.exceptions import InsecureRequestWarning
 
 import util
-from typing import (
-    Dict,
-    Any,
-    Union,
-    Optional,
-    Awaitable,
-    Tuple,
-    List,
-    Callable,
-    Iterable,
-    Generator,
-    Type,
-    TypeVar,
-    cast,
-    overload,
-)
 
 try:
     import ddddocr
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.22)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.23)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
 CONST_SERVER_PORT = 16888
@@ -160,6 +146,16 @@ def clean_tmp_file():
     for item in js_folder_list:
         if item.startswith("tmp_"):
             os.remove(os.path.join(js_folder, item))
+
+    # clean generated ext.
+    target_folder_list = os.listdir(webdriver_folder)
+    for item in target_folder_list:
+        if item.startswith("tmp_"):
+            try:
+                shutil.rmtree(os.path.join(webdriver_folder, item))
+            except Exception as exc:
+                print(exc)
+                pass
 
 class HomepageHandler(tornado.web.RequestHandler):
     def get(self):
@@ -420,7 +416,7 @@ def web_server():
     if not is_port_binded:
         asyncio.run(main_server())
     else:
-        print("port:", CONST_SERVER_PORT, " is in used.")
+        print("port:", CONST_SERVER_PORT, " is in used. 已有其他程式占用 web server 的連接埠.")
 
 if __name__ == "__main__":
     global GLOBAL_SERVER_SHUTDOWN

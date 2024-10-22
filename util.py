@@ -5,14 +5,15 @@ import pathlib
 import platform
 import random
 import re
+import shutil
 import socket
 import subprocess
 import sys
 import threading
+import uuid
 from typing import Optional
 
 import requests
-import uuid
 
 CONST_FROM_TOP_TO_BOTTOM = "from top to bottom"
 CONST_FROM_BOTTOM_TO_TOP = "from bottom to top"
@@ -529,7 +530,6 @@ def dump_settings_to_maxbot_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG
                     outfile.write(json_str)
             except Exception as e:
                 pass
-
 
 def dump_settings_to_maxblock_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG_FILE, CONST_MAXBLOCK_EXTENSION_FILTER):
     # sync config.
@@ -1960,3 +1960,12 @@ def launch_maxbot(script_name="chrome_tixcraft", filename="", homepage="", kktix
 
 def get_token():
     return str(uuid.uuid4().hex)
+
+def copytree(src, dst, symlinks=False, ignore=None):
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)

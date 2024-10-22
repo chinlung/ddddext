@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.parse
 import warnings
 import webbrowser
 from datetime import datetime
@@ -21,7 +22,6 @@ import nodriver as uc
 from nodriver import cdp
 from nodriver.core.config import Config
 from urllib3.exceptions import InsecureRequestWarning
-import urllib.parse
 
 import util
 
@@ -31,7 +31,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.22)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.23)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -78,10 +78,37 @@ async def nodriver_goto_homepage(driver, config_dict):
     try:
         tab = await driver.get(homepage)
         await tab.get_content()
+        # try to avoid error: cannot unpack non-iterable NoneType object, but it still happen.
+        time.sleep(2)
+
+        # workaround for not able resize.
+        url, is_quit_bot, reset_act_tab = await nodriver_current_url(driver, tab)
+        if len(driver.tabs) ==2 and url=="chrome://new-tab-page/":
+            print("retry...")
+
+            for i, tab in enumerate(driver):
+                if i == 0:
+                    print("close tab:", i)
+                    await tab.close()
+
+            #print("goto:", homepage)
+            tab = await driver.get(homepage)
+
+        # workaround for hidden chrome-extension tab.
+        if len(driver.tabs) ==2:
+            if url.startswith("chrome-extension://") and url.endswith("/audio.html"):
+                print("close wrong tab...")
+                for i, tab in enumerate(driver):
+                    if i > 0:
+                        print("close tab:", i)
+                        await tab.close()
+
     except Exception as e:
+        print(e)
         pass
 
     # access cookie
+    #print(config_dict)
     if len(config_dict["cookie"]) > 0:
         try:
             cookies  = await driver.cookies.get_all()
@@ -90,6 +117,7 @@ async def nodriver_goto_homepage(driver, config_dict):
                 cookies.append(new_cookie)
             await driver.cookies.set_all(cookies)
         except Exception as e:
+            print(e)
             pass
 
     return tab
@@ -201,7 +229,7 @@ def push_injectjs_to_extension(config_dict, extension_path):
                                 text_file.write(script_text)
                         except Exception as e:
                             print(e)
-                            pass                        
+                            pass
                         clean_scripts_dict_array.append(content_scripts_dict)
 
         manifest_dict["content_scripts"] = clean_scripts_dict_array
@@ -221,25 +249,47 @@ def get_extension_config(config_dict):
         ext = get_maxbot_extension_path(CONST_DDDDEXT_EXTENSION_NAME)
         if len(ext) > 0:
             push_injectjs_to_extension(config_dict, ext)
-            conf.add_extension(ext)
-            util.dump_settings_to_maxbot_plus_extension(ext, config_dict, CONST_MAXBOT_CONFIG_FILE)
+            clone_ext = ext.replace(CONST_DDDDEXT_EXTENSION_NAME, "tmp_" + CONST_DDDDEXT_EXTENSION_NAME + "_" + config_dict["token"])
+            if not os.path.exists(clone_ext):
+                os.mkdir(clone_ext)
+            util.copytree(ext, clone_ext)
+            conf.add_extension(clone_ext)
+            util.dump_settings_to_maxbot_plus_extension(clone_ext, config_dict, CONST_MAXBOT_CONFIG_FILE)
     return conf
 
-async def nodriver_resize_window(tab, config_dict):
-    if len(config_dict["advanced"]["window_size"]) > 0:
-        if "," in config_dict["advanced"]["window_size"]:
-            size_array = config_dict["advanced"]["window_size"].split(",")
-            position_left = 0
+async def nodriver_resize_window(driver, config_dict):
+    window_size = config_dict["advanced"]["window_size"]
+    if len(window_size) > 0:
+        #print("window_size", window_size)
+        if "," in window_size:
+            launch_counter = 1
+            target_left = 0
+            target_top = 30
+            target_width = 480
+            target_height = 1024
+            size_array = window_size.split(",")
+            if len(size_array) >= 2:
+                target_width = int(size_array[0])
+                target_height = int(size_array[1])
             if len(size_array) >= 3:
-                position_left = int(size_array[0]) * int(size_array[2])
+                if len(size_array[2]) > 0:
+                    launch_counter = int(size_array[2])
+                target_left = target_width * launch_counter
+                if target_left >= 1440:
+                    target_left = 0
             #tab = await driver.main_tab()
-            if tab:
-                try:
-                    await tab.set_window_size(left=position_left, top=30, width=int(size_array[0]), height=int(size_array[1]))
-                except Exception as exc:
-                    print(exc)
-                    print("請關閉所有視窗後，重新操作一次")
-                    pass
+            try:
+                for i, tab in enumerate(driver):
+                    #print(i, launch_counter, target_left, target_width, target_height)
+                    if i==0:
+                        await tab.activate()
+                    await tab.set_window_size(left=target_left, top=target_top, width=target_width, height=target_height)
+                    await tab.sleep()
+            except Exception as exc:
+                # cannot unpack non-iterable NoneType object
+                print(exc)
+                print("請關閉所有視窗後，重新操作一次")
+                pass
 
 # we only handle last tab.
 async def nodriver_current_url(driver, tab):
@@ -392,7 +442,7 @@ async def sendkey_to_browser(driver, config_dict, url):
             #print("nodriver start to sendkey")
             for each_tab in driver.tabs:
                 all_command_done = await sendkey_to_browser_exist(each_tab, sendkey_dict, url)
-                
+
                 # must all command success to delete tmp file.
                 if all_command_done:
                     try:
@@ -429,7 +479,7 @@ async def sendkey_to_browser_exist(tab, sendkey_dict, url):
                         #print("click fail for selector:", select_query)
                         print(e)
                         pass
-                
+
                 if cmd_dict["type"] == "click":
                     print("click")
                     try:
@@ -469,7 +519,7 @@ async def eval_to_browser(driver, config_dict, url):
             #print("nodriver start to eval")
             for each_tab in driver.tabs:
                 all_command_done = await eval_to_browser_exist(each_tab, eval_dict, url)
-                
+
                 # must all command success to delete tmp file.
                 if all_command_done:
                     try:
@@ -523,7 +573,8 @@ async def main(args):
         if not driver is None:
             tab = await nodriver_goto_homepage(driver, config_dict)
             if not config_dict["advanced"]["headless"]:
-                await nodriver_resize_window(tab, config_dict)
+                print("start to resize window")
+                await nodriver_resize_window(driver, config_dict)
         else:
             print("無法使用nodriver，程式無法繼續工作")
             sys.exit()
