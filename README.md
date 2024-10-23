@@ -26,9 +26,22 @@ https://github.com/max32002/ddddext/releases
 # Demo 
 (示範影片)
 
-* DDDDEXT 使用教學 https://youtu.be/wZy4BQ-z-S4
-* DDDDEXT 自動打勾+輸入欄位內容 https://youtu.be/98YikOWDLjo
-* DDDDEXT 在特定欄位自動打勾/移除勾勾 https://youtu.be/q17yvLtRato
+* 網頁驗證碼自動輸入使用教學 https://youtu.be/wZy4BQ-z-S4
+* 自動打勾+輸入欄位內容 https://youtu.be/98YikOWDLjo
+* 在特定欄位自動打勾/移除勾勾 https://youtu.be/q17yvLtRato
+* 示範設定 cookie 內容 https://youtu.be/gGMW_CvFpmE
+
+
+# Feature
+(主要功能)
+
+* OCR驗證碼欄位，並輸入到指定輸入框。
+* 填入內容到指定欄位內。
+* 自動打勾。
+* 注入 Javascript 到指定網頁。
+* 設定 cookie 內容。
+* 匯入其他創作者的設定檔。
+
 
 # How to Use 
 (使用教學)
