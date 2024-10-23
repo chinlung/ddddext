@@ -52,8 +52,19 @@ https://github.com/max32002/ddddext/releases
 # How to Execute Source Code 
 (透過原始碼的執行方法)
 
-DDDDEXT 可以不安裝就在各個平台的 chrome 瀏覽器上執行，使用方式先從 gibhub 是先下載原始檔的zip 檔, 並解壓縮, 在 chrome 瀏覽器的網址輸入 chrome://extensions, 右邊啟用 Developer mode，就可以 Load unpacked extension. 擴允功能的目錄在 /ddddext/webdriver/ 目錄下. 
+透過原始碼執行 DDDDEXT 有2種執行方式：
+1. Load unpacked extension
+2. 下指令執行主程式
 
+## Load unpacked extension
+
+DDDDEXT 可以不安裝就在各個平台的 chrome 瀏覽器上執行，使用方式先從 gibhub 是先下載原始檔的zip 檔, 並解壓縮, 在 chrome 瀏覽器的網址輸入 chrome://extensions, 右邊啟用 Developer mode，就可以 Load unpacked extension. 擴充功能的目錄在 /ddddext/webdriver/ 目錄下.
+
+說明：沒有透過 start.py (或 start.exe) 並按下「搶票」，而是透過「Load unpacked extension」只執行 chrome extension（擴充功能）的方式，需要指定「OCR Server URL」為網路上的其他伺服器，才有辦法進行 OCR。建議透過 start.py (或 start.exe) 並按下「搶票」來執行 ddddext.
+
+透過 start.py (或 start.exe) 並按下「搶票」開出來的瀏覽，請不要去修改「OCR Server URL」的內容值，使用預設的 「http://127.0.0.1:16888/」 即可。
+
+## 下指令執行主程式
 透過原始碼執行ddddext教學影片：
 https://youtu.be/HpVG91j0lbI
 
