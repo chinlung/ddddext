@@ -41,6 +41,7 @@ https://github.com/max32002/ddddext/releases
 * 注入 Javascript 到指定網頁。
 * 設定 cookie 內容。
 * 匯入其他創作者的設定檔。
+* 啟動被隔離的瀏覽器。
 
 
 # How to Use 
