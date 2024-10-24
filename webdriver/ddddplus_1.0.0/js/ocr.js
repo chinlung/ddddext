@@ -118,15 +118,16 @@ function ocr_main(settings) {
                 //console.log(document.location.href);
                 //console.log(is_match_url);
                 if (is_match_url && d.captcha.length && d.input.length) {
+                    // assign to global var.
                     if (d.maxlength.length > 0) {
                         target_captcha_length = parseInt(d.maxlength);
                     }
-
                     target_captcha_selector = d.captcha;
                     target_input_selector = d.input;
-                    if (target_captcha_selector.length && target_input_selector.length) {
+
+                    if ($(target_input_selector).length) {
                         let current_inputed_value = $(target_input_selector).val();
-                        //console.log("current_inputed_value:" + current_inputed_value);
+                        //console.log("current_inputed_value: " + current_inputed_value);
                         if (d.captcha.length > 3) {
                             if (current_inputed_value == "驗證碼") {
                                 current_inputed_value = "";
@@ -140,6 +141,8 @@ function ocr_main(settings) {
                                 }, 100);
                             }
                         }
+                    } else {
+                        //console.log("input selector not found: " + target_input_selector);
                     }
                 }
             });

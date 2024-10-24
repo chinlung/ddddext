@@ -31,7 +31,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.23)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.24)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -75,23 +75,30 @@ def get_config_dict(args):
 
 async def nodriver_goto_homepage(driver, config_dict):
     homepage = config_dict["homepage"]
+    tab=None
     try:
         tab = await driver.get(homepage)
         await tab.get_content()
+        await tab.sleep()
         # try to avoid error: cannot unpack non-iterable NoneType object, but it still happen.
         time.sleep(2)
 
         # workaround for not able resize.
         url, is_quit_bot, reset_act_tab = await nodriver_current_url(driver, tab)
         if len(driver.tabs) ==2 and url=="chrome://new-tab-page/":
-            print("retry...")
+            print("建議再按一次「搶票」，目前視窗有異常, 程式應該有出錯...")
+
+            #driver.stop()
 
             for i, tab in enumerate(driver):
                 if i == 0:
                     print("close tab:", i)
                     await tab.close()
+                if i == 1:
+                    print("activate tab:", i)
+                    await tab.activate()
 
-            #print("goto:", homepage)
+            print("goto:", homepage)
             tab = await driver.get(homepage)
 
         # workaround for hidden chrome-extension tab.
@@ -119,6 +126,14 @@ async def nodriver_goto_homepage(driver, config_dict):
         except Exception as e:
             print(e)
             pass
+
+        try:
+            for each_tab in driver.tabs:
+                await each_tab.reload()
+        except Exception as exc:
+            print(exc)
+            pass
+
 
     return tab
 

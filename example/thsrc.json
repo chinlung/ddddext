@@ -1,0 +1,85 @@
+{
+    "homepage": "https://irs.thsrc.com.tw/IMINT/",
+    "refresh_datetime": "",
+    "memo": "\u7ad9\u5225\u5c0d\u61c9\u7684\u5167\u5bb9\u503c\u8207\u5be6\u969b\u7ad9\u540d\uff1a\nvalue=\"1\":\u5357\u6e2f\nvalue=\"2\":\u53f0\u5317\nvalue=\"3\":\u677f\u6a4b\nvalue=\"4\":\u6843\u5712\nvalue=\"5\":\u65b0\u7af9\nvalue=\"6\":\u82d7\u6817\nvalue=\"7\":\u53f0\u4e2d\nvalue=\"8\":\u5f70\u5316\nvalue=\"9\":\u96f2\u6797\nvalue=\"10\":\u5609\u7fa9\nvalue=\"11\":\u53f0\u5357\nvalue=\"12\":\u5de6\u71df\n\n\n",
+    "ocr_captcha": {
+        "enable": true,
+        "beta": true,
+        "force_submit": true,
+        "captcha": [
+            {
+                "enable": true,
+                "url": "https://irs.thsrc.com.tw/IMINT/*",
+                "captcha": "#BookingS1Form_homeCaptcha_passCode",
+                "input": "#securityCode",
+                "maxlength": "4"
+            }
+        ]
+    },
+    "advanced": {
+        "chrome_extension": true,
+        "headless": false,
+        "verbose": false,
+        "remote_url": "\"http://127.0.0.1:16888/\"",
+        "proxy_server_port": "",
+        "window_size": "480,1024"
+    },
+    "autofill": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": ""
+        }
+    ],
+    "autocheck": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": false
+        }
+    ],
+    "injectjs": [
+        {
+            "enable": true,
+            "url": "https://irs.thsrc.com.tw/IMINT/*",
+            "script": "// \u641c\u5c0b\u65b9\u5f0f\n$('input[data-target=\"search-by-trainNo\"]').prop(\"checked\", true);\n// \u51fa\u767c\u7ad9\n$('select[name=\"selectStartStation\"]').val(\"1\");\n// \u627a\u9054\u7ad9\n$('select[name=\"selectDestinationStation\"]').val(\"12\");\n// \u51fa\u767c\u65e5\u671f\n$(\"#toTimeInputField\").val(\"2024/11/02\");\n// \u8eca\u6b21\n$('input[name=\"toTrainIDInputField\"]').val(\"821\");\n// \u5f35\u6578, \u8a2d\u5b9a\u5f35\u6578\u6642\u9700\u8981\u591a\u52a0\u4e00\u500bF, \u4f8b\u5982\uff1a2\u5f35\u8a2d\u5b9a\u70ba 2F\n$('select[name=\"ticketPanel:rows:0:ticketAmount\"]').val(\"2F\");\n// \u81ea\u52d5\u9001\u51fa\nlet auto_submit = true;\nsetInterval(() => {\n$(\"#cookiePolicy\").remove();\nif(auto_submit){\nif($(\"#securityCode\").length && $(\"#securityCode\").val().length == 4) {\nwebdriver_location_click(settings, \"#SubmitButton\", document.location.href);\n}\n}\n}, 200);",
+            "run_at": "document_end",
+            "world": "ISOLATED"
+        },
+        {
+            "enable": true,
+            "url": "https://irs.thsrc.com.tw/IMINT/?wicket:interface=:2::",
+            "script": "// \u53d6\u7968\u8b58\u5225\u78bc\n$(\"#idNumber\").val(\"A123454679\");\n//\u806f\u7d61\u96fb\u8a71\n$(\"#mobilePhone\").val(\"0912345678\");\n// \u96fb\u5b50\u90f5\u4ef6\n$(\"#email\").val(\"yourname@gmail.com\");",
+            "run_at": "document_end",
+            "world": "ISOLATED"
+        }
+    ],
+    "cookie": [
+        {
+            "enable": true,
+            "domain": "irs.thsrc.com.tw",
+            "key": "AcceptIRSCookiePolicyTime",
+            "value": "Thu+Oct+24+2024+09%3A08%3A19+GMT%2B0800+(Taipei+Standard+Time)",
+            "path": "/",
+            "http_only": true,
+            "secure": true
+        },
+        {
+            "enable": true,
+            "domain": "www.thsrc.com.tw",
+            "key": "AcceptThsrcCookiePolicyTime",
+            "value": "Thu+Oct+24+2024+09:08:12+GMT+0800+(Taipei+Standard+Time)",
+            "path": "/",
+            "http_only": true,
+            "secure": true
+        }
+    ],
+    "checkall": [
+        {
+            "enable": true,
+            "url": ""
+        }
+    ]
+}
