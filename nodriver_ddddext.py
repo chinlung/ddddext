@@ -31,7 +31,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.24)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.25)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -39,8 +39,12 @@ CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
 
 warnings.simplefilter('ignore',InsecureRequestWarning)
 ssl._create_default_https_context = ssl._create_unverified_context
+
+# for debug.
+#logger = logging.getLogger("demo")
+#logging.basicConfig(level=10)
+logger = logging.getLogger("logger")
 logging.basicConfig()
-logger = logging.getLogger('logger')
 
 def get_config_dict(args):
     app_root = util.get_app_root()
@@ -78,10 +82,8 @@ async def nodriver_goto_homepage(driver, config_dict):
     tab=None
     try:
         tab = await driver.get(homepage)
-        await tab.get_content()
-        await tab.sleep()
-        # try to avoid error: cannot unpack non-iterable NoneType object, but it still happen.
-        time.sleep(2)
+        await driver
+        await driver.sleep(5)
 
         # workaround for not able resize.
         url, is_quit_bot, reset_act_tab = await nodriver_current_url(driver, tab)
@@ -134,50 +136,7 @@ async def nodriver_goto_homepage(driver, config_dict):
             print(exc)
             pass
 
-
     return tab
-
-
-def get_nodriver_browser_args():
-    browser_args = [
-        "--disable-animations",
-        "--disable-app-info-dialog-mac",
-        "--disable-background-networking",
-        "--disable-backgrounding-occluded-windows",
-        "--disable-breakpad",
-        "--disable-component-update",
-        "--disable-default-apps",
-        "--disable-dev-shm-usage",
-        "--disable-device-discovery-notifications",
-        "--disable-dinosaur-easter-egg",
-        "--disable-domain-reliability",
-        "--disable-features=IsolateOrigins,site-per-process,TranslateUI",
-        "--disable-infobars",
-        "--disable-logging",
-        "--disable-login-animations",
-        "--disable-login-screen-apps",
-        "--disable-notifications",
-        "--disable-password-generation",
-        "--disable-popup-blocking",
-        "--disable-renderer-backgrounding",
-        "--disable-session-crashed-bubble",
-        "--disable-smooth-scrolling",
-        "--disable-suggestions-ui",
-        "--disable-sync",
-        "--disable-translate",
-        "--hide-crash-restore-bubble",
-        "--homepage=about:blank",
-        "--no-default-browser-check",
-        "--no-first-run",
-        "--no-pings",
-        "--no-service-autorun",
-        "--password-store=basic",
-        "--remote-debugging-host=127.0.0.1",
-        "--lang=zh-TW",
-        #"--disable-remote-fonts",
-    ]
-
-    return browser_args
 
 def get_maxbot_extension_path(extension_folder):
     app_root = util.get_app_root()
@@ -254,12 +213,11 @@ def push_injectjs_to_extension(config_dict, extension_path):
 
 
 def get_extension_config(config_dict):
-    default_lang = "zh-TW"
     no_sandbox=True
-    browser_args = get_nodriver_browser_args()
+    browser_args = []
     if len(config_dict["advanced"]["proxy_server_port"]) > 2:
         browser_args.append('--proxy-server=%s' % config_dict["advanced"]["proxy_server_port"])
-    conf = Config(browser_args=browser_args, lang=default_lang, no_sandbox=no_sandbox)
+    conf = Config(browser_args=browser_args, no_sandbox=no_sandbox)
     if config_dict["advanced"]["chrome_extension"]:
         ext = get_maxbot_extension_path(CONST_DDDDEXT_EXTENSION_NAME)
         if len(ext) > 0:
@@ -399,16 +357,6 @@ def nodriver_overwrite_prefs(conf):
 
     state_filepath = os.path.join(conf.user_data_dir,"Local State")
     state_dict = {}
-    state_dict["performance_tuning"]={}
-    state_dict["performance_tuning"]["high_efficiency_mode"]={}
-    state_dict["performance_tuning"]["high_efficiency_mode"]["state"]=1
-    state_dict["browser"]={}
-    state_dict["browser"]["enabled_labs_experiments"]=[
-        "history-journeys@4",
-        "memory-saver-multi-state-mode@1",
-        "modal-memory-saver@1",
-        "read-anything@2"
-    ]
     state_dict["dns_over_https"]={}
     state_dict["dns_over_https"]["mode"]="off"
     json_str = json.dumps(state_dict)
@@ -576,14 +524,9 @@ async def main(args):
     driver = None
     tab = None
     if not config_dict is None:
-        sandbox = False
         conf = get_extension_config(config_dict)
         nodriver_overwrite_prefs(conf)
-        # PS: nodrirver run twice always cause error:
-        # Failed to connect to browser
-        # One of the causes could be when you are running as root.
-        # In that case you need to pass no_sandbox=True
-        #driver = await uc.start(conf, sandbox=sandbox, headless=config_dict["advanced"]["headless"])
+        #driver = await uc.start(conf, headless=config_dict["advanced"]["headless"])
         driver = await uc.start(conf)
         if not driver is None:
             tab = await nodriver_goto_homepage(driver, config_dict)

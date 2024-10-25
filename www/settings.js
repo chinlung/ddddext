@@ -157,7 +157,7 @@ function checkUsePublicServer() {
 
 function jon_url_onchange() {
     let target_url = $("#json_url").val();
-    if(target_url.length > 0) {
+    if (target_url.length > 0) {
         $("#json-import-btn").removeClass("disabled");
     } else {
         $("#json-import-btn").addClass("disabled");
@@ -174,11 +174,9 @@ function json_import() {
     checkall_reset();
 
     let target_url = $("#json_url").val();
-    const body = JSON.stringify(
-        {
-            url: target_url
-        }
-    );
+    const body = JSON.stringify({
+        url: target_url
+    });
 
     let api_url = "http://127.0.0.1:16888/import";
     $.post(api_url, body, function() {
@@ -194,7 +192,7 @@ function json_import() {
         })
         .always(function() {
             //alert( "finished" );
-        });    
+        });
 }
 
 let messageClearTimer;
@@ -263,10 +261,12 @@ function get_autofill_array() {
         for (let i = 1; i <= node; i++) {
             let item = {};
             item["enable"] = true;
-            item["url"] = $("#autofill_url_" + i).val();
-            item["selector"] = $("#autofill_selector_" + i).val();
-            item["value"] = $("#autofill_value_" + i).val();
-            autofill.push(item);
+            if ($("#autofill_url_" + i).length) {
+                item["url"] = $("#autofill_url_" + i).val();
+                item["selector"] = $("#autofill_selector_" + i).val();
+                item["value"] = $("#autofill_value_" + i).val();
+                autofill.push(item);
+            }
         }
     }
     return autofill;
@@ -283,10 +283,12 @@ function get_autocheck_array() {
         for (let i = 1; i <= node; i++) {
             let item = {};
             item["enable"] = true;
-            item["url"] = $("#autocheck_url_" + i).val();
-            item["selector"] = $("#autocheck_selector_" + i).val();
-            item["value"] = $("#autocheck_value_" + i).prop("checked");
-            autocheck.push(item);
+            if ($("#autocheck_url_" + i).length) {
+                item["url"] = $("#autocheck_url_" + i).val();
+                item["selector"] = $("#autocheck_selector_" + i).val();
+                item["value"] = $("#autocheck_value_" + i).prop("checked");
+                autocheck.push(item);
+            }
         }
     }
     return autocheck;
@@ -303,11 +305,13 @@ function get_captcha_array() {
         for (let i = 1; i <= node; i++) {
             let item = {};
             item["enable"] = true;
-            item["url"] = $("#captcha_url_" + i).val();
-            item["captcha"] = $("#captcha_selector_" + i).val();
-            item["input"] = $("#input_selector_" + i).val();
-            item["maxlength"] = $("#maxlength_" + i).val();
-            captcha.push(item);
+            if ($("#captcha_url_" + i).length) {
+                item["url"] = $("#captcha_url_" + i).val();
+                item["captcha"] = $("#captcha_selector_" + i).val();
+                item["input"] = $("#input_selector_" + i).val();
+                item["maxlength"] = $("#maxlength_" + i).val();
+                captcha.push(item);
+            }
         }
     }
     return captcha;
@@ -324,11 +328,13 @@ function get_injectjs_array() {
         for (let i = 1; i <= node; i++) {
             let item = {};
             item["enable"] = true;
-            item["url"] = $("#injectjs_url_" + i).val();
-            item["script"] = $("#injectjs_script_" + i).val();
-            item["run_at"] = "document_end";
-            item["world"] = "ISOLATED";
-            injectjs.push(item);
+            if ($("#injectjs_url_" + i).length) {
+                item["url"] = $("#injectjs_url_" + i).val();
+                item["script"] = $("#injectjs_script_" + i).val();
+                item["run_at"] = "document_end";
+                item["world"] = "ISOLATED";
+                injectjs.push(item);
+            }
         }
     }
     return injectjs;
@@ -345,13 +351,15 @@ function get_cookie_array() {
         for (let i = 1; i <= node; i++) {
             let item = {};
             item["enable"] = true;
-            item["domain"] = $("#cookie_domain_" + i).val();
-            item["key"] = $("#cookie_key_" + i).val();
-            item["value"] = $("#cookie_value_" + i).val();
-            item["path"] = "/";
-            item["http_only"] = true;
-            item["secure"] = true;
-            cookie.push(item);
+            if ($("#cookie_domain_" + i).length) {
+                item["domain"] = $("#cookie_domain_" + i).val();
+                item["key"] = $("#cookie_key_" + i).val();
+                item["value"] = $("#cookie_value_" + i).val();
+                item["path"] = "/";
+                item["http_only"] = true;
+                item["secure"] = true;
+                cookie.push(item);
+            }
         }
     }
     return cookie;
@@ -368,8 +376,10 @@ function get_checkall_array() {
         for (let i = 1; i <= node; i++) {
             let item = {};
             item["enable"] = true;
-            item["url"] = $("#checkall_url_" + i).val();
-            checkall.push(item);
+            if ($("#checkall_url_" + i).length) {
+                item["url"] = $("#checkall_url_" + i).val();
+                checkall.push(item);
+            }
         }
     }
     return checkall;
@@ -435,21 +445,20 @@ function maxbot_save() {
     maxbot_save_api();
 }
 
-function ddddext_version_api()
-{
+function ddddext_version_api() {
     let api_url = "http://127.0.0.1:16888/version";
-    $.get( api_url, function() {
-        //alert( "success" );
-    })
-    .done(function(data) {
-        $("#ddddext_version").html(data.version);
-    })
-    .fail(function() {
-        //alert( "error" );
-    })
-    .always(function() {
-        //alert( "finished" );
-    });
+    $.get(api_url, function() {
+            //alert( "success" );
+        })
+        .done(function(data) {
+            $("#ddddext_version").html(data.version);
+        })
+        .fail(function() {
+            //alert( "error" );
+        })
+        .always(function() {
+            //alert( "finished" );
+        });
 }
 
 function check_unsaved_fields() {
@@ -543,8 +552,8 @@ function run_message(msg) {
 const importJsonModal = document.getElementById('importJsonModal');
 importJsonModal.addEventListener('shown.bs.modal', () => {
     const input_field = document.getElementById('json_url');
-    if(input_field!=null) {
-        input_field.focus();          
+    if (input_field != null) {
+        input_field.focus();
     }
 });
 
