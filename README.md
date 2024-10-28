@@ -32,7 +32,7 @@ https://github.com/max32002/ddddext/releases
 * 設定 cookie 內容 https://youtu.be/gGMW_CvFpmE
 * 搶車票 https://youtu.be/CmViGxh0IAM
 * 搶票 https://youtu.be/1tOjwEo2gbQ
-* 掛號 https://youtu.be/1zGrT7PN7Rs
+* 掛號 https://youtu.be/1vCm3NjVsYY
 
 
 # Feature
