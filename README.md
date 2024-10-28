@@ -29,9 +29,10 @@ https://github.com/max32002/ddddext/releases
 * 網頁驗證碼自動輸入使用教學 https://youtu.be/wZy4BQ-z-S4
 * 自動打勾+輸入欄位內容 https://youtu.be/98YikOWDLjo
 * 在特定欄位自動打勾/移除勾勾 https://youtu.be/q17yvLtRato
-* 示範設定 cookie 內容 https://youtu.be/gGMW_CvFpmE
-* 注入 Javascript 到網頁(1) https://youtu.be/CmViGxh0IAM
-* 注入 Javascript 到網頁(2) https://youtu.be/1tOjwEo2gbQ
+* 設定 cookie 內容 https://youtu.be/gGMW_CvFpmE
+* 搶車票 https://youtu.be/CmViGxh0IAM
+* 搶票 https://youtu.be/1tOjwEo2gbQ
+* 掛號 https://youtu.be/1zGrT7PN7Rs
 
 
 # Feature
