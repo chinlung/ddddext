@@ -18,11 +18,14 @@
     },
     "advanced": {
         "chrome_extension": true,
+        "adblock": false,
+        "hide_some_image": false,
+        "block_facebook_network": false,
         "headless": false,
         "verbose": false,
         "remote_url": "\"http://127.0.0.1:16888/\"",
         "proxy_server_port": "",
-        "window_size": "480,1024"
+        "window_size": ""
     },
     "autofill": [
         {

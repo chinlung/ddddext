@@ -1,0 +1,72 @@
+{
+    "homepage": "https://hlapp.tzuchi.com.tw/tchw/OpdReg/RegNo.aspx?data=oQ%2bfJOavkDjPYiFg3rA5l%2bL55UjpLevL%2bKTi23GWGbQ%3d&sLoc=3",
+    "refresh_datetime": "",
+    "ocr_captcha": {
+        "enable": false,
+        "beta": true,
+        "force_submit": true,
+        "captcha": [
+            {
+                "enable": true,
+                "url": "",
+                "captcha": "",
+                "input": "",
+                "maxlength": "4"
+            }
+        ]
+    },
+    "advanced": {
+        "chrome_extension": true,
+        "adblock": false,
+        "hide_some_image": false,
+        "block_facebook_network": false,
+        "headless": false,
+        "verbose": false,
+        "remote_url": "\"http://127.0.0.1:16888/\"",
+        "proxy_server_port": "",
+        "window_size": ""
+    },
+    "autofill": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": ""
+        }
+    ],
+    "autocheck": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": false
+        }
+    ],
+    "injectjs": [
+        {
+            "enable": true,
+            "url": "https://*.tw/*/RegNo*",
+            "script": "// \u521d\u8a3a = true, \u8907\u8a3a = false\nlet RegFM = true;\n// \u8eab\u4efd\u8b49\u5b57\u865f(\u6216\u75c5\u6b77\u865f)\nlet MRNo = \"A123456789\";\n// \u9023\u7d61\u96fb\u8a71\nlet Tel = \"0977123456\";\n// \u897f\u5143\u51fa\u751f\u65e5\u671f\n// 1957\u5e746\u67083\u65e5\u51fa\u751f\uff0c\u8acb\u8f38\u5165: 19570603\nlet Birthday = \"19570603\";\n// \u59d3\u540d\nlet Name = \"DDDD\";\n// \u6027\u5225, \u7537=true, \u5973=false\nlet SexType = true;\n// \u7b2c\u4e8c\u9053\u9a57\u8b49\u78bc\u3010\u500b\u4eba\u51fa\u751f\u65e5\u671f\u3011\n// \u51fa\u751f\u65e5\u671f\u70ba 057 \u5e74 4 \u6708 12 \u65e5\uff0c\u8acb\u8f38\u5165\uff1a0570412\nlet SecondAnswer = \"0570412\"\n// \u4ee5\u4e0b\u70ba\u7a0b\u5f0f\u78bc....\nif (RegFM) {\n    $(\"#rblRegFM_0\").click();\n    $(\"#MainContent_rblRegFM_0\").click();\n}\n$(\"#txtMRNo\").val(MRNo);\n$(\"#MainContent_tbxMRNo\").val(MRNo);\n$(\"#txtTel\").val(Tel);\n$(\"#MainContent_tbxTel\").val(Tel);\n$(\"#MainContent_tbxBirthday\").val(Birthday);\n$(\"#MainContent_tbxName\").val(Name);\nif (!SexType) {\n    $(\"#MainContent_rtbSexType_1\").click();\n}\n$(\"#TextBox3\").val(SecondAnswer);\nif ($(\"#TextBox3\").length) {\n    //$(\"#Button2\").click();\n}\nvar tzuchi_ocr_config = {\n    captcha_length: 5,\n    captcha_selector: \"#imgVI\",\n    captcha_renew_selector: \"#Button4\",\n    input_selector: \"#txtVCode\",\n    submit_selector: \"#btnRegNo\"\n};\nvar tzuchi_ocr_config_org = {\n    captcha_length: 5,\n    captcha_selector: \"#MainContent_imgVI\",\n    captcha_renew_selector: \"#MainContent_btnReflash\",\n    input_selector: \"#MainContent_tbxVCode\",\n    submit_selector: \"#MainContent_btnRegNo\"\n};\n\nfunction isNumeric(value) {\n    return /^-?\\d+$/.test(value);\n}\nvar tzuchi_ocr_interval = null;\n\nfunction get_tzuchi_ocr_image() {\n    // due to multi format\n    const currentUrl = window.location.href;\n    const domain = currentUrl.split('/')[2];\n    let captcha_selector = tzuchi_ocr_config.captcha_selector;\n    if (domain.indexOf(\".org.tw\") > -1) {\n        captcha_selector = tzuchi_ocr_config_org.captcha_selector;\n    }\n\n    let image_data = \"\";\n    //console.log(captcha_selector);\n    let img = document.querySelector(captcha_selector);\n    if (img != null) {\n        let canvas = document.createElement('canvas');\n        let context = canvas.getContext('2d');\n        canvas.height = img.naturalHeight;\n        canvas.width = img.naturalWidth;\n        context.drawImage(img, 0, 0);\n        let img_data = canvas.toDataURL();\n        if (img_data) {\n            image_data = img_data.split(\",\")[1];\n            //console.log(image_data);\n        }\n    } else {\n        // console.log(\"img not found:\" + tzuchi_ocr_config.captcha_selector);\n    }\n    return image_data;\n}\n\nvar last_tzuchi_captcha_answer = \"\";\nchrome.runtime.onMessage.addListener((message) => {\n    // due to multi format\n    const currentUrl = window.location.href;\n    const domain = currentUrl.split('/')[2];\n    let captcha_renew_selector = tzuchi_ocr_config.captcha_renew_selector;\n    if (domain.indexOf(\".org.tw\") > -1) {\n        captcha_renew_selector = tzuchi_ocr_config_org.captcha_renew_selector;\n    }\n\n    //console.log('sent from background', message);\n    if (message && message.hasOwnProperty(\"answer\")) {\n        let is_valid_anwser = false;\n        if (message.answer.length == tzuchi_ocr_config.captcha_length) {\n            if (isNumeric(message.answer)) {\n                is_valid_anwser = true;\n            }\n        }\n        //console.log(is_valid_anwser);\n        if (is_valid_anwser) {\n            tzuchi_set_ocr_answer(message.answer);\n            last_tzuchi_captcha_answer = message.answer;\n        } else {\n            // renew captcha.\n            if (last_tzuchi_captcha_answer != message.answer) {\n                last_tzuchi_captcha_answer = message.answer;\n                console.log(\"renew captcha: \" + captcha_renew_selector);\n                if ($(captcha_renew_selector).length) {\n                    $(captcha_renew_selector).click();\n                }\n                tzuchi_area_main();\n            }\n        }\n    }\n});\n\nfunction tzuchi_set_ocr_answer(answer) {\n    // due to multi format\n    const currentUrl = window.location.href;\n    const domain = currentUrl.split('/')[2];\n    let input_selector = tzuchi_ocr_config.input_selector;\n    let submit_selector = tzuchi_ocr_config.submit_selector;\n    if (domain.indexOf(\".org.tw\") > -1) {\n        input_selector = tzuchi_ocr_config_org.input_selector;\n        submit_selector = tzuchi_ocr_config_org.submit_selector;\n    }\n\n    //console.log(\"answer:\"+answer);\n    if (answer.length > 0) {\n        let sendkey_by_webdriver = false;\n        if (settings) {\n            if (settings.hasOwnProperty(\"token\")) {\n                sendkey_by_webdriver = true;\n            }\n        }\n        //console.log(\"sendkey_by_webdriver:\"+sendkey_by_webdriver);\n        if (!sendkey_by_webdriver) {\n            // solution #1: javascript.\n            $(input_selector).val(answer);\n            $(submit_selector).click();\n        } else {\n            // solution #2: click webdriver.\n            //webdriver_location_sendkey(settings, input_selector, answer, document.location.href);\n            //webdriver_location_click(settings, submit_selector, document.location.href);\n            $(input_selector).val(answer);\n            $(submit_selector).click();\n        }\n    }\n}\n\nasync function tzuchi_get_ocr_answer(api_url, image_data) {\n    let bundle = {\n        action: 'ocr',\n        data: {\n            'url': api_url + 'ocr',\n            'image_data': image_data,\n        }\n    };\n    const return_answer = await chrome.runtime.sendMessage(bundle);\n}\n\nfunction tzuchi_orc_image_ready(api_url) {\n    let ret = false;\n    let image_data = get_tzuchi_ocr_image();\n    if (image_data.length > 0) {\n        ret = true;\n        if (tzuchi_ocr_interval) clearInterval(tzuchi_ocr_interval);\n        tzuchi_get_ocr_answer(api_url, image_data);\n    }\n    //console.log(\"orc_image_ready:\"+ret);\n    return ret;\n}\n\nfunction tzuchi_area_main() {\n    let remote_url_string = get_remote_url(settings);\n    tzuchi_ocr_interval = setInterval(() => {\n        tzuchi_orc_image_ready(remote_url_string);\n    }, 100);\n}\n\nstorage.get('settings', function(items) {\n    if (items.settings) {\n        settings = items.settings;\n        tzuchi_area_main();\n    } else {\n        console.log('no settings found');\n    }\n});",
+            "run_at": "document_end",
+            "world": "ISOLATED"
+        }
+    ],
+    "cookie": [
+        {
+            "enable": true,
+            "domain": "",
+            "key": "",
+            "value": "",
+            "path": "/",
+            "http_only": true,
+            "secure": true
+        }
+    ],
+    "checkall": [
+        {
+            "enable": true,
+            "url": ""
+        }
+    ],
+    "memo": "// ==UserScript==\n// @name          tzuchi auto submit\n// @version       1.2\n// ==/UserScript==\n\n\u8173\u672c\u7684\u4f7f\u7528\u65b9\u6cd5\uff1a\n* Step 1: \u4fee\u6539 Javascript #1 \u88e1\u7684\u76f8\u95dc\u53c3\u6578\n* Step 2: \u6309\u300c\u6436\u7968\u300d\n\n\u9644\u8a3b\uff1a\n* \u7b2c\u4e8c\u9053\u9a57\u8b49\u78bc, \u9084\u6c92\u958b\u59cb\u5be6\u4f5c\u3002\n* \u96d6\u7136\u300c\u672a\u66fe\u300d\u5be6\u969b\u770b\u8a3a\uff0c\u4f46\u66fe\u7d93\u639b\u865f\u6210\u529f\u5c31\u9700\u8981\u4f7f\u7528\u300c\u8907\u8a3a\u300d\uff0c\u7576\u4f60\u770b\u5230\u5f48\u51fa\u8a0a\u606f\u70ba\uff1a\u300c\u8acb\u9ede\u9078\u3010\u8907\u8a3a\u3011\u300d\u5c31\u6703\u77e5\u9053\u8981\u6539\u639b\u8907\u8a3a\u3002\n"
+}

@@ -82,6 +82,7 @@ function get_captcha_array() {
             if ($("#captcha_url_" + i).length) {
                 item["url"] = $("#captcha_url_" + i).val();
                 item["captcha"] = $("#captcha_selector_" + i).val();
+                item["captcha_renew"] = $("#captcha_renew_selector_" + i).val();
                 item["input"] = $("#input_selector_" + i).val();
                 item["maxlength"] = $("#maxlength_" + i).val();
                 captcha.push(item);
@@ -238,6 +239,7 @@ function captcha_new_with_value(item) {
         if (item) {
             $("#captcha_url_" + node).val(item["url"]);
             $("#captcha_selector_" + node).val(item["captcha"]);
+            $("#captcha_renew_selector_" + node).val(item["captcha_renew"]);
             $("#input_selector_" + node).val(item["input"]);
             $("#maxlength_" + node).val(item["maxlength"]);
         }

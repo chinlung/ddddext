@@ -29,7 +29,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.25)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.26)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
 CONST_SERVER_PORT = 16888
@@ -58,6 +58,8 @@ def get_default_config():
     config_dict['advanced']={}
 
     config_dict["advanced"]["chrome_extension"] = True
+    config_dict["advanced"]["adblock"] = False
+    config_dict["advanced"]["hide_some_image"] = False
 
     config_dict["advanced"]["headless"] = False
     config_dict["advanced"]["verbose"] = False
@@ -114,10 +116,9 @@ def launch_maxbot():
         launch_counter = 0
     
     script_name = "nodriver_ddddext"
-
-    #global txt_window_size
-    #window_size = txt_window_size.get().strip()
-    window_size = "480,1024"
+    config_filepath, config_dict = load_json()
+    
+    window_size = config_dict["advanced"]["window_size"]
     if len(window_size) > 0:
         if "," in window_size:
             size_array = window_size.split(",")

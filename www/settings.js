@@ -21,6 +21,10 @@ const memo = document.querySelector('#memo');
 const proxy_server_port = document.querySelector('#proxy_server_port');
 const window_size = document.querySelector('#window_size');
 
+const adlbock = document.querySelector('#adlbock');
+const hide_some_image = document.querySelector('#hide_some_image');
+const block_facebook_network = document.querySelector('#block_facebook_network');
+
 const ocr_captcha_enable = document.querySelector('#ocr_captcha_enable');
 const ocr_captcha_use_public_server = document.querySelector('#ocr_captcha_use_public_server');
 const remote_url = document.querySelector('#remote_url');
@@ -40,6 +44,10 @@ function load_settins_to_form(settings) {
 
         proxy_server_port.value = settings.advanced.proxy_server_port;
         window_size.value = settings.advanced.window_size;
+
+        adblock.checked = settings.advanced.adblock;
+        hide_some_image.checked = settings.advanced.hide_some_image;
+        block_facebook_network.checked = settings.advanced.block_facebook_network;
 
         ocr_captcha_enable.checked = settings.ocr_captcha.enable;
 
@@ -308,6 +316,7 @@ function get_captcha_array() {
             if ($("#captcha_url_" + i).length) {
                 item["url"] = $("#captcha_url_" + i).val();
                 item["captcha"] = $("#captcha_selector_" + i).val();
+                item["captcha_renew"] = $("#captcha_renew_selector_" + i).val();
                 item["input"] = $("#input_selector_" + i).val();
                 item["maxlength"] = $("#maxlength_" + i).val();
                 captcha.push(item);
@@ -396,6 +405,10 @@ function save_changes_to_dict(silent_flag) {
         // advanced
         settings.advanced.proxy_server_port = proxy_server_port.value;
         settings.advanced.window_size = window_size.value;
+
+        settings.advanced.adblock = adblock.checked;
+        settings.advanced.hide_some_image = hide_some_image.checked;
+        settings.advanced.block_facebook_network = block_facebook_network.checked;
 
         settings.ocr_captcha.enable = ocr_captcha_enable.checked;
         let remote_url_array = [];
@@ -581,6 +594,7 @@ function captcha_new_with_value(item) {
         if (item) {
             $("#captcha_url_" + node).val(item["url"]);
             $("#captcha_selector_" + node).val(item["captcha"]);
+            $("#captcha_renew_selector_" + node).val(item["captcha_renew"]);
             $("#input_selector_" + node).val(item["input"]);
             $("#maxlength_" + node).val(item["maxlength"]);
         }
