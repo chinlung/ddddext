@@ -54,18 +54,6 @@
                 "js/common.js",
                 "js/ocr.js"
             ]
-        },
-        {
-            "matches": [
-                "https://max-everyday.com/*"
-            ],
-            "run_at": "document_end",
-            "world": "ISOLATED",
-            "js": [
-                "jquery.min.js",
-                "js/common.js",
-                "js/tmp_1.js"
-            ]
         }
     ],
     "version": "1.0.5"

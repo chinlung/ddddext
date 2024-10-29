@@ -20,13 +20,13 @@
         "chrome_extension": true,
         "adblock": true,
         "hide_some_image": false,
+        "block_facebook_network": false,
         "play_sound_filename": "sound_ding-dong.wav",
         "headless": false,
         "verbose": false,
         "remote_url": "\"http://127.0.0.1:16888/\"",
         "proxy_server_port": "",
-        "window_size": "480,1024",
-        "block_facebook_network": false
+        "window_size": "480,1024"
     },
     "autofill": [
         {
@@ -47,8 +47,8 @@
     "injectjs": [
         {
             "enable": true,
-            "url": "https://max-everyday.com/*",
-            "script": "playsound();",
+            "url": "",
+            "script": "",
             "run_at": "document_end",
             "world": "ISOLATED"
         }

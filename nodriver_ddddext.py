@@ -237,11 +237,13 @@ def get_extension_config(config_dict):
 
             app_root = util.get_app_root()
             if len(config_dict["advanced"]["play_sound_filename"]) > 0 :
+                playsound_path = CONST_DDDDEXT_EXTENSION_PLAYSOUND_PATH
+                if platform.system().lower()=="windows":
+                    playsound_path = playsound_path.replace("/","\\")
                 src = os.path.join(app_root, config_dict["advanced"]["play_sound_filename"])
-                dst = os.path.join(clone_ext, CONST_DDDDEXT_EXTENSION_PLAYSOUND_PATH)
-                print(src)
-                print(dst)
-                shutil.copyfile(src, dst)
+                dst = os.path.join(clone_ext, playsound_path)
+                if os.path.exists(src):
+                    shutil.copyfile(src, dst)
 
             conf.add_extension(clone_ext)
     return conf
