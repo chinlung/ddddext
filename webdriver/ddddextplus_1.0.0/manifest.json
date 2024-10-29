@@ -14,19 +14,11 @@
         "service_worker": "background.js",
         "type": "module"
     },
-    "permissions": [
-        "storage",
-        "declarativeNetRequest",
-        "declarativeNetRequestFeedback"
-    ],
-    "host_permissions": [
-        "http://maxbot.dropboxlike.com:16888/*",
-        "http://127.0.0.1:16888/*"
-    ],
     "web_accessible_resources": [
         {
             "resources": [
-                "data/*.json"
+                "data/*.json",
+                "mp3/notification.mp3"
             ],
             "extension_ids": [
                 "*"
@@ -35,6 +27,16 @@
                 "*://*/*"
             ]
         }
+    ],
+    "permissions": [
+        "offscreen",
+        "storage",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback"
+    ],
+    "host_permissions": [
+        "http://maxbot.dropboxlike.com:16888/*",
+        "http://127.0.0.1:16888/*"
     ],
     "options_page": "options.html",
     "action": {
@@ -51,6 +53,18 @@
                 "jquery.min.js",
                 "js/common.js",
                 "js/ocr.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://max-everyday.com/*"
+            ],
+            "run_at": "document_end",
+            "world": "ISOLATED",
+            "js": [
+                "jquery.min.js",
+                "js/common.js",
+                "js/tmp_1.js"
             ]
         }
     ],

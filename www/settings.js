@@ -20,6 +20,7 @@ const memo = document.querySelector('#memo');
 // advance
 const proxy_server_port = document.querySelector('#proxy_server_port');
 const window_size = document.querySelector('#window_size');
+const play_sound_filename = document.querySelector('#play_sound_filename');
 
 const adlbock = document.querySelector('#adlbock');
 const hide_some_image = document.querySelector('#hide_some_image');
@@ -44,6 +45,7 @@ function load_settins_to_form(settings) {
 
         proxy_server_port.value = settings.advanced.proxy_server_port;
         window_size.value = settings.advanced.window_size;
+        play_sound_filename.value = settings.advanced.play_sound_filename;
 
         adblock.checked = settings.advanced.adblock;
         hide_some_image.checked = settings.advanced.hide_some_image;
@@ -405,6 +407,7 @@ function save_changes_to_dict(silent_flag) {
         // advanced
         settings.advanced.proxy_server_port = proxy_server_port.value;
         settings.advanced.window_size = window_size.value;
+        settings.advanced.play_sound_filename = play_sound_filename.value;
 
         settings.advanced.adblock = adblock.checked;
         settings.advanced.hide_some_image = hide_some_image.checked;
@@ -488,7 +491,8 @@ function check_unsaved_fields() {
         const field_list_advance = [
             "remote_url",
             "proxy_server_port",
-            "window_size"
+            "window_size",
+            "play_sound_filename"
         ];
         field_list_advance.forEach(f => {
             const field = document.querySelector('#' + f);

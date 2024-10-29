@@ -18,13 +18,14 @@
     },
     "advanced": {
         "chrome_extension": true,
-        "adblock": false,
+        "adblock": true,
         "hide_some_image": false,
         "block_facebook_network": false,
         "headless": false,
         "verbose": false,
         "remote_url": "\"http://127.0.0.1:16888/\"",
         "proxy_server_port": "",
+        "play_sound_fiilename": "sound_ding-dong.wav",
         "window_size": ""
     },
     "autofill": [

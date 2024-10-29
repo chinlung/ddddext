@@ -20,6 +20,7 @@ from nodriver import cdp
 from nodriver.core.config import Config
 
 import util
+import shutil
 
 try:
     import ddddocr
@@ -27,11 +28,12 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.26)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.27)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
-CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
+CONST_DDDDEXT_EXTENSION_NAME = "ddddextplus_1.0.0"
+CONST_DDDDEXT_EXTENSION_PLAYSOUND_PATH = "mp3/notification.mp3"
 
 logger = logging.getLogger("demo")
 logging.basicConfig()
@@ -231,8 +233,17 @@ def get_extension_config(config_dict):
             if not os.path.exists(clone_ext):
                 os.mkdir(clone_ext)
             util.copytree(ext, clone_ext)
-            conf.add_extension(clone_ext)
             util.dump_settings_to_maxbot_plus_extension(clone_ext, config_dict, CONST_MAXBOT_CONFIG_FILE)
+
+            app_root = util.get_app_root()
+            if len(config_dict["advanced"]["play_sound_filename"]) > 0 :
+                src = os.path.join(app_root, config_dict["advanced"]["play_sound_filename"])
+                dst = os.path.join(clone_ext, CONST_DDDDEXT_EXTENSION_PLAYSOUND_PATH)
+                print(src)
+                print(dst)
+                shutil.copyfile(src, dst)
+
+            conf.add_extension(clone_ext)
     return conf
 
 async def nodrver_block_urls(tab, config_dict):

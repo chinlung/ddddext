@@ -18,8 +18,9 @@
     },
     "advanced": {
         "chrome_extension": true,
-        "adblock": false,
+        "adblock": true,
         "hide_some_image": false,
+        "play_sound_filename": "sound_ding-dong.wav",
         "headless": false,
         "verbose": false,
         "remote_url": "\"http://127.0.0.1:16888/\"",
@@ -46,8 +47,8 @@
     "injectjs": [
         {
             "enable": true,
-            "url": "",
-            "script": "",
+            "url": "https://max-everyday.com/*",
+            "script": "playsound();",
             "run_at": "document_end",
             "world": "ISOLATED"
         }

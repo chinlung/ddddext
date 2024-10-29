@@ -29,10 +29,11 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.26)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.27)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
-CONST_DDDDEXT_EXTENSION_NAME = "ddddplus_1.0.0"
+CONST_DDDDEXT_EXTENSION_NAME = "ddddextplus_1.0.0"
 CONST_SERVER_PORT = 16888
+CONST_SOUND_FILENAME_DEFAULT = "sound_ding-dong.wav"
 CONST_HOMEPAGE_DEFAULT = "about:blank"
 
 warnings.simplefilter('ignore',InsecureRequestWarning)
@@ -58,8 +59,11 @@ def get_default_config():
     config_dict['advanced']={}
 
     config_dict["advanced"]["chrome_extension"] = True
-    config_dict["advanced"]["adblock"] = False
+    config_dict["advanced"]["adblock"] = True
     config_dict["advanced"]["hide_some_image"] = False
+    config_dict["advanced"]["block_facebook_network"] = False
+
+    config_dict["advanced"]["play_sound_filename"] = CONST_SOUND_FILENAME_DEFAULT
 
     config_dict["advanced"]["headless"] = False
     config_dict["advanced"]["verbose"] = False
@@ -114,10 +118,10 @@ def launch_maxbot():
         launch_counter += 1
     else:
         launch_counter = 0
-    
+
     script_name = "nodriver_ddddext"
     config_filepath, config_dict = load_json()
-    
+
     window_size = config_dict["advanced"]["window_size"]
     if len(window_size) > 0:
         if "," in window_size:
@@ -225,7 +229,7 @@ class ImportJsonHandler(tornado.web.RequestHandler):
                 except Exception as exc:
                     print("load json fail:")
                     print(exc)
-                    pass    
+                    pass
         self.write(config_dict)
 
 
@@ -324,6 +328,15 @@ class EvalHandler(tornado.web.RequestHandler):
 
         self.write({"return": True})
 
+class PlaysoundHandler(tornado.web.RequestHandler):
+    def get(self):
+        config_filepath, config_dict = load_json()
+        if len(config_dict["advanced"]["play_sound_filename"]) > 0:
+            app_root = util.get_app_root()
+            captcha_sound_filename = os.path.join(app_root, config_dict["advanced"]["play_sound_filename"])
+            util.play_mp3_async(captcha_sound_filename)
+        self.write({"return": True})
+
 class OcrHandler(tornado.web.RequestHandler):
     def get(self):
         self.write({"answer": "1234"})
@@ -386,11 +399,12 @@ async def main_server():
         ("/shutdown", ShutdownHandler),
         ("/sendkey", SendkeyHandler),
         ("/eval", EvalHandler),
+        ("/playsound", PlaysoundHandler),
 
         # status api
         ("/status", StatusHandler),
         ("/run", RunHandler),
-        
+
         # json api
         ("/load", LoadJsonHandler),
         ("/save", SaveJsonHandler),
@@ -422,14 +436,15 @@ def web_server():
 if __name__ == "__main__":
     global GLOBAL_SERVER_SHUTDOWN
     GLOBAL_SERVER_SHUTDOWN = False
-    
+
     threading.Thread(target=web_server, daemon=True).start()
     clean_tmp_file()
-    
+
     print("maxbot app version:", CONST_APP_VERSION)
     print("python version:", platform.python_version())
     print("platform:", platform.platform())
     print("To exit web server press Ctrl + C.")
+
     while True:
         time.sleep(0.4)
         if GLOBAL_SERVER_SHUTDOWN:
