@@ -1,6 +1,6 @@
 {
     "author": "Max Yao",
-    "name": "DDDD Plus",
+    "name": "DDDDEXT Plus",
     "description": "Quick way to OCR on web page.",
     "icons": {
         "16": "icons/maxbot-16.png",
@@ -14,19 +14,11 @@
         "service_worker": "background.js",
         "type": "module"
     },
-    "permissions": [
-        "storage",
-        "declarativeNetRequest",
-        "declarativeNetRequestFeedback"
-    ],
-    "host_permissions": [
-        "http://maxbot.dropboxlike.com:16888/*",
-        "http://127.0.0.1:16888/*"
-    ],
     "web_accessible_resources": [
         {
             "resources": [
-                "data/*.json"
+                "data/*.json",
+                "mp3/notification.mp3"
             ],
             "extension_ids": [
                 "*"
@@ -35,6 +27,16 @@
                 "*://*/*"
             ]
         }
+    ],
+    "permissions": [
+        "offscreen",
+        "storage",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback"
+    ],
+    "host_permissions": [
+        "http://maxbot.dropboxlike.com:16888/*",
+        "http://127.0.0.1:16888/*"
     ],
     "options_page": "options.html",
     "action": {
@@ -54,5 +56,5 @@
             ]
         }
     ],
-    "version": "1.0.4"
+    "version": "1.0.5"
 }

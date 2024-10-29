@@ -1,10 +1,13 @@
 const storage = chrome.storage.local;
 var settings = null;
 var ocrInterval = null;
-var target_captcha_length = 4;
-var target_captcha_selector = "";
-var target_input_selector = "";
-
+var ocr_config = {
+    captcha_length: 4,
+    captcha_selector: "",
+    captcha_renew_selector: "",
+    input_selector: "",
+    submit_selector: ""
+};
 function get_ocr_image(captcha_selector) {
     //console.log("get_ocr_image: " + captcha_selector);
     let image_data = "";
@@ -27,16 +30,22 @@ function get_ocr_image(captcha_selector) {
 var last_captcha_answer = "";
 chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
-    if(message && message.hasOwnProperty("answer")) {
-        if (message.answer.length == target_captcha_length) {
+    if (message && message.hasOwnProperty("answer")) {
+        let is_valid_anwser = false;
+        if (message.answer.length == ocr_config.captcha_length) {
+            is_valid_anwser = true;
+        }
+        if (is_valid_anwser) {
             set_ocr_answer(message.answer);
             last_captcha_answer = message.answer;
         } else {
             // renew captcha.
             if (last_captcha_answer != message.answer) {
                 last_captcha_answer = message.answer;
-                console.log("renew captcha");
-                $(target_captcha_selector).click();
+                console.log("renew captcha: " + ocr_config.captcha_renew_selector);
+                if ($(ocr_config.captcha_renew_selector).length) {
+                    $(ocr_config.captcha_renew_selector).click();
+                }
             }
         }
     }
@@ -52,7 +61,7 @@ function javascript_keypress(selector, text) {
 
 function set_ocr_answer(answer) {
     //console.log("answer:"+answer);
-    const current_inputed_value = $(target_input_selector).val();
+    const current_inputed_value = $(ocr_config.input_selector).val();
     if (answer.length > 0) {
         if (current_inputed_value != answer) {
             let sendkey_by_webdriver = false;
@@ -64,9 +73,9 @@ function set_ocr_answer(answer) {
             //console.log("sendkey_by_webdriver: " + sendkey_by_webdriver);
             //console.log(settings);
             if (!sendkey_by_webdriver) {
-                javascript_keypress(target_input_selector, answer);
+                javascript_keypress(ocr_config.input_selector, answer);
             } else {
-                webdriver_location_sendkey(settings, target_input_selector, answer, document.location.href);
+                webdriver_location_sendkey(settings, ocr_config.input_selector, answer, document.location.href);
             }
         }
     }
@@ -87,7 +96,7 @@ async function get_ocr_answer(api_url, image_data) {
 
 function orc_image_ready(api_url) {
     let ret = false;
-    let image_data = get_ocr_image(target_captcha_selector);
+    let image_data = get_ocr_image(ocr_config.captcha_selector);
     if (image_data.length > 0) {
         ret = true;
         if (ocrInterval) clearInterval(ocrInterval);
@@ -120,18 +129,19 @@ function ocr_main(settings) {
                 if (is_match_url && d.captcha.length && d.input.length) {
                     // assign to global var.
                     if (d.maxlength.length > 0) {
-                        target_captcha_length = parseInt(d.maxlength);
+                        ocr_config.captcha_length = parseInt(d.maxlength);
                     }
-                    target_captcha_selector = d.captcha;
-                    target_input_selector = d.input;
+                    ocr_config.captcha_selector = d.captcha;
+                    ocr_config.captcha_renew_selector = d.captcha_renew;
+                    ocr_config.input_selector = d.input;
 
-                    if ($(target_input_selector).length) {
-                        let current_inputed_value = $(target_input_selector).val();
+                    if ($(ocr_config.input_selector).length) {
+                        let current_inputed_value = $(ocr_config.input_selector).val();
                         //console.log("current_inputed_value: " + current_inputed_value);
                         if (d.captcha.length > 3) {
                             if (current_inputed_value == "驗證碼") {
                                 current_inputed_value = "";
-                                $(target_input_selector).val("");
+                                $(ocr_config.input_selector).val("");
                             }
                         }
                         if (current_inputed_value == "") {
@@ -142,7 +152,7 @@ function ocr_main(settings) {
                             }
                         }
                     } else {
-                        //console.log("input selector not found: " + target_input_selector);
+                        //console.log("input selector not found: " + ocr_config.input_selector);
                     }
                 }
             });
@@ -208,7 +218,7 @@ function checkall_main(settings) {
                 let is_match_url = false;
                 if (d.enable) {
                     if (d.url == "") {
-                        is_match_url = true;
+                        is_match_url = false;
                     } else {
                         is_match_url = wildcardMatchRegExp(document.location.href, d.url);
                     }
@@ -240,7 +250,7 @@ function run_injectjs(settings) {
         let is_match_url = false;
         if (d.enable) {
             if (d.url == "") {
-                is_match_url = true;
+                is_match_url = false;
             } else {
                 is_match_url = wildcardMatchRegExp(document.location.href, d.url);
             }
@@ -276,4 +286,4 @@ var inputInterval = setInterval(() => {
             //console.log('maxbot status is not OFF');
         }
     });
-}, 200);
+}, 100);

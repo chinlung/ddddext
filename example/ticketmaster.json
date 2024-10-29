@@ -12,50 +12,19 @@
                 "captcha": "",
                 "input": "",
                 "maxlength": "4"
-            },
-            {
-                "enable": true,
-                "url": "",
-                "captcha": "",
-                "input": "",
-                "maxlength": "4"
-            },
-            {
-                "enable": true,
-                "url": "",
-                "captcha": "",
-                "input": "",
-                "maxlength": "4"
-            },
-            {
-                "enable": true,
-                "url": "",
-                "captcha": "",
-                "input": "",
-                "maxlength": "4"
-            },
-            {
-                "enable": true,
-                "url": "",
-                "captcha": "",
-                "input": "",
-                "maxlength": "4"
-            },
-            {
-                "enable": true,
-                "url": "",
-                "captcha": "",
-                "input": "",
-                "maxlength": "4"
             }
         ]
     },
     "advanced": {
         "chrome_extension": true,
+        "adblock": true,
+        "hide_some_image": true,
+        "block_facebook_network": true,
         "headless": false,
         "verbose": false,
         "remote_url": "\"http://127.0.0.1:16888/\"",
         "proxy_server_port": "",
+        "play_sound_fiilename": "sound_ding-dong.wav",
         "window_size": "480,1024"
     },
     "autofill": [
@@ -98,7 +67,7 @@
         {
             "enable": true,
             "url": "https://ticketmaster.sg/ticket/check-captcha/*",
-            "script": "$('input[type=checkbox]').each(function() {\n    $(this).prop('checked', true);\n});\n$(\"img[style='width: 100%; padding: 0;']\").remove();\n$(\"footer\").remove();\n\nvar ticketmaster_ocr_interval = null;\n\nfunction get_ticketmaster_ocr_image() {\n    let image_data = \"\";\n    const currentUrl = window.location.href;\n    const domain = currentUrl.split('/')[2];\n    let image_id = 'TicketForm_verifyCode-image';\n    let img = document.getElementById(image_id);\n    if (img != null) {\n        let canvas = document.createElement('canvas');\n        let context = canvas.getContext('2d');\n        canvas.height = img.naturalHeight;\n        canvas.width = img.naturalWidth;\n        context.drawImage(img, 0, 0);\n        let img_data = canvas.toDataURL();\n        if (img_data) {\n            image_data = img_data.split(\",\")[1];\n            //console.log(image_data);\n        }\n    }\n    return image_data;\n}\n\nvar last_ticketmaster_captcha_answer = \"\";\nchrome.runtime.onMessage.addListener((message) => {\n    //console.log('sent from background', message);\n    if(message && message.hasOwnProperty(\"answer\")) {\n        if (message.answer.length == 4) {\n            ticketmaster_set_ocr_answer(message.answer);\n            last_ticketmaster_captcha_answer = message.answer;\n        } else {\n            // renew captcha.\n            if (last_ticketmaster_captcha_answer != message.answer) {\n                last_ticketmaster_captcha_answer = message.answer;\n                console.log(\"renew ticketmaster captcha\");\n                $('#TicketForm_verifyCode-image').click();\n                ticketmaster_area_main();\n            }\n        }\n    }\n});\n\nfunction ticketmaster_set_ocr_answer(answer) {\n    console.log(\"answer:\"+answer);\n    if (answer.length > 0) {\n        let sendkey_by_webdriver = false;\n        if (settings) {\n            if (settings.hasOwnProperty(\"token\")) {\n                sendkey_by_webdriver = true;\n            }\n        }\n        const target_input_selector = '#TicketForm_verifyCode';\n        const target_submit_selector = \"button[type='submit']\";\n\n        console.log(\"sendkey_by_webdriver:\"+sendkey_by_webdriver);\n        if (!sendkey_by_webdriver) {\n            // solution #1: javascript.\n            $(target_input_selector).val(answer);\n            $(target_submit_selector).click();\n        } else {\n            // solution #2: click webdriver.\n            webdriver_location_sendkey(settings, target_input_selector, answer, document.location.href);\n            webdriver_location_click(settings, target_submit_selector, document.location.href);\n            $(target_input_selector).val(answer);\n            $(target_submit_selector).click();\n        }\n    }\n}\n\nasync function ticketmaster_get_ocr_answer(api_url, image_data) {\n    let bundle = {\n        action: 'ocr',\n        data: {\n            'url': api_url + 'ocr',\n            'image_data': image_data,\n        }\n    };\n    const return_answer = await chrome.runtime.sendMessage(bundle);\n}\n\nfunction ticketmaster_orc_image_ready(api_url) {\n    let ret = false;\n    let image_data = get_ticketmaster_ocr_image();\n    if (image_data.length > 0) {\n        ret = true;\n        if (ticketmaster_ocr_interval) clearInterval(ticketmaster_ocr_interval);\n        ticketmaster_get_ocr_answer(api_url, image_data);\n    }\n    //console.log(\"orc_image_ready:\"+ret);\n    return ret;\n}\n\nfunction ticketmaster_area_main() {\n    let remote_url_string = get_remote_url(settings);\n    ticketmaster_ocr_interval = setInterval(() => {\n        ticketmaster_orc_image_ready(remote_url_string);\n    }, 100);\n}\n\nstorage.get('settings', function(items) {\n    if (items.settings) {\n        settings = items.settings;\n        ticketmaster_area_main();\n    } else {\n        console.log('no settings found');\n    }\n});",
+            "script": "$('input[type=checkbox]').each(function() {\n    $(this).prop('checked', true);\n});\n$(\"img[style='width: 100%; padding: 0;']\").remove();\n$(\"footer\").remove();\n\nvar ticketmaster_ocr_interval = null;\nvar ticketmaster_ocr_config = {\n    captcha_length: 4,\n    captcha_selector: \"#TicketForm_verifyCode-image\",\n    captcha_renew_selector: \"#TicketForm_verifyCode-image\",\n    input_selector: \"#TicketForm_verifyCode\",\n    submit_selector: \"button[type='submit']\"\n};\nfunction get_ticketmaster_ocr_image() {\n    // due to multi format\n    let captcha_selector = ticketmaster_ocr_config.captcha_selector;\n    \n    let image_data = \"\";\n    //console.log(captcha_selector);\n    let img = document.querySelector(captcha_selector);\n    if (img != null) {\n        let canvas = document.createElement('canvas');\n        let context = canvas.getContext('2d');\n        canvas.height = img.naturalHeight;\n        canvas.width = img.naturalWidth;\n        context.drawImage(img, 0, 0);\n        let img_data = canvas.toDataURL();\n        if (img_data) {\n            image_data = img_data.split(\",\")[1];\n            //console.log(image_data);\n        }\n    } else {\n        // console.log(\"img not found:\" + tzuchi_ocr_config.captcha_selector);\n    }\n    return image_data;\n}\n\nvar last_ticketmaster_captcha_answer = \"\";\nchrome.runtime.onMessage.addListener((message) => {\n    let captcha_renew_selector = ticketmaster_ocr_config.captcha_renew_selector;\n\n    //console.log('sent from background', message);\n    if (message && message.hasOwnProperty(\"answer\")) {\n        let is_valid_anwser = false;\n        if (message.answer.length == ticketmaster_ocr_config.captcha_length) {\n            is_valid_anwser = true;\n        }\n        //console.log(is_valid_anwser);\n        if (is_valid_anwser) {\n            ticketmaster_set_ocr_answer(message.answer);\n            last_ticketmaster_captcha_answer = message.answer;\n        } else {\n            // renew captcha.\n            if (last_ticketmaster_captcha_answer != message.answer) {\n                last_ticketmaster_captcha_answer = message.answer;\n                console.log(\"renew captcha: \" + captcha_renew_selector);\n                if ($(captcha_renew_selector).length) {\n                    $(captcha_renew_selector).click();\n                }\n                ticketmaster_area_main();\n            }\n        }\n    }\n});\n\nfunction ticketmaster_set_ocr_answer(answer) {\n    let input_selector = ticketmaster_ocr_config.input_selector;\n    let submit_selector = ticketmaster_ocr_config.submit_selector;\n    //console.log(\"answer:\"+answer);\n    if (answer.length > 0) {\n        let sendkey_by_webdriver = false;\n        if (settings) {\n            if (settings.hasOwnProperty(\"token\")) {\n                sendkey_by_webdriver = true;\n            }\n        }\n        //console.log(\"sendkey_by_webdriver:\"+sendkey_by_webdriver);\n        if (!sendkey_by_webdriver) {\n            // solution #1: javascript.\n            $(input_selector).val(answer);\n            $(submit_selector).click();\n        } else {\n            // solution #2: click webdriver.\n            webdriver_location_sendkey(settings, input_selector, answer, document.location.href);\n            webdriver_location_click(settings, submit_selector, document.location.href);\n            $(input_selector).val(answer);\n            $(submit_selector).click();\n        }\n    }\n}\n\nasync function ticketmaster_get_ocr_answer(api_url, image_data) {\n    let bundle = {\n        action: 'ocr',\n        data: {\n            'url': api_url + 'ocr',\n            'image_data': image_data,\n        }\n    };\n    const return_answer = await chrome.runtime.sendMessage(bundle);\n}\n\nfunction ticketmaster_orc_image_ready(api_url) {\n    let ret = false;\n    let image_data = get_ticketmaster_ocr_image();\n    if (image_data.length > 0) {\n        ret = true;\n        if (ticketmaster_ocr_interval) clearInterval(ticketmaster_ocr_interval);\n        ticketmaster_get_ocr_answer(api_url, image_data);\n    }\n    //console.log(\"orc_image_ready:\"+ret);\n    return ret;\n}\n\nfunction ticketmaster_area_main() {\n    let remote_url_string = get_remote_url(settings);\n    ticketmaster_ocr_interval = setInterval(() => {\n        storage.get('status', function(items) {\n            if (items.status && items.status == 'ON') {\n                ticketmaster_orc_image_ready(remote_url_string);\n            } else {\n                console.log('ddddext status is not OFF');\n            }\n        });\n    }, 100);\n}\n\nstorage.get('settings', function(items) {\n    if (items.settings) {\n        settings = items.settings;\n        ticketmaster_area_main();\n    }\n});\n",
             "run_at": "document_end",
             "world": "ISOLATED"
         }
@@ -120,5 +89,5 @@
             "url": ""
         }
     ],
-    "memo": "// ==UserScript==\n// @name          ticketmaster auto submit\n// @include       https://ticketmaster.sg/*\n// @version       1.0\n// ==/UserScript==\n// \u7531\u65bc nodriver\u300c\u975e\u5e38\u4e0d\u7a69\u5b9a\u300d\uff0c \u9996\u9801\u5efa\u8b70\u8a2d\u70ba https://ticketmaster.sg/activity/detail/xxx \n// \u5982\u679c\u8a2d\u70ba https://ticketmaster.sg/ \u5728\u9078\u5f35\u6578\u7684\u7db2\u9801\u56fa\u5b9a\u6703\u639b\u6389\u3002\n\n\u8173\u672c\u7684\u4f7f\u7528\u65b9\u6cd5\uff1a\n* Step 1: \u8f38\u5165 cookie \u88e1\u7684 SID \u5167\u5bb9\u503c\u3002\n* Step 2: \u4fee\u6539 Javascript #2 \u88e1\u7684 ticket_number=\u6307\u5b9a\u5f35\u6578\uff0c\u9810\u8a2d\u503c\u662f 2\n* Step 3: \u6309\u300c\u6436\u7968\u300d\n\n\u76ee\u524d\u63d0\u4f9b\u7684 javascript \u6709\uff1a\n#1 /activity/detail/* \u529f\u80fd\u662f\uff1a\u7db2\u5740\u7684\u8df3\u8f49\u3002\n#2 /area/* \u529f\u80fd\u662f\uff1a\u8f38\u5165\u5f35\u6578\n#3 /ticket/check-captcha/* \u529f\u80fd\u662f\uff1a\u6253\u52fe\u2705\uff0c\u8f38\u5165\u9a57\u8b49\u78bc\uff0c\u6309\u4e0b\u9001\u51fa\u6309\u9215\u3002\n"
+    "memo": "// ==UserScript==\n// @name          ticketmaster auto submit\n// @include       https://ticketmaster.sg/*\n// @version       1.5\n// ==/UserScript==\n// \u7531\u65bc nodriver\u300c\u975e\u5e38\u4e0d\u7a69\u5b9a\u300d\uff0c \u9996\u9801\u5efa\u8b70\u8a2d\u70ba https://ticketmaster.sg/activity/detail/xxx \n// \u5982\u679c\u8a2d\u70ba https://ticketmaster.sg/ \u5728\u9078\u5f35\u6578\u7684\u7db2\u9801\u56fa\u5b9a\u6703\u639b\u6389\u3002\n\n\u8173\u672c\u7684\u4f7f\u7528\u65b9\u6cd5\uff1a\n* Step 1: \u8f38\u5165 cookie \u88e1\u7684 SID \u5167\u5bb9\u503c\u3002\n* Step 2: \u4fee\u6539 Javascript #2 \u88e1\u7684 ticket_number=\u6307\u5b9a\u5f35\u6578\uff0c\u9810\u8a2d\u503c\u662f 2\n* Step 3: \u6309\u300c\u6436\u7968\u300d\n\n\u76ee\u524d\u63d0\u4f9b\u7684 javascript \u6709\uff1a\n#1 /activity/detail/* \u529f\u80fd\u662f\uff1a\u7db2\u5740\u7684\u8df3\u8f49\u3002\n#2 /area/* \u529f\u80fd\u662f\uff1a\u8f38\u5165\u5f35\u6578\n#3 /ticket/check-captcha/* \u529f\u80fd\u662f\uff1a\u6253\u52fe\u2705\uff0c\u8f38\u5165\u9a57\u8b49\u78bc\uff0c\u6309\u4e0b\u9001\u51fa\u6309\u9215\u3002\n"
 }

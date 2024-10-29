@@ -157,6 +157,40 @@
                     </label>
                     <div class="col-sm-10">
                         <input class="form-control" id="window_size" value="" />
+                        <div class="bd-callout bd-callout-info">
+                            <strong>提示：</strong>
+                            沒輸入則不會調整瀏覽器視窗，輸入格式：寬,高。例如: <code>480,1024</code>。
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" for="play_sound_filename">
+                        播放音效檔案路徑
+                    </label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="play_sound_filename" value="" />
+                        <div class="bd-callout bd-callout-info">
+                            <strong>提示：</strong>
+                            可以透過 javascript 輸入 playsound(); 進行音效檔播放。
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label form-check-label" for="adblock">擋掉 Tracker 連線</label>
+                    <div class="col-sm-10">
+                        <input class="form-check-input" type="checkbox" id="adblock" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label form-check-label" for="hide_some_image">擋掉字型與部份圖示</label>
+                    <div class="col-sm-10">
+                        <input class="form-check-input" type="checkbox" id="hide_some_image" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label form-check-label" for="block_facebook_network">擋掉 Facebook 連線</label>
+                    <div class="col-sm-10">
+                        <input class="form-check-input" type="checkbox" id="block_facebook_network" />
                     </div>
                 </div>
                 <div class="row">
@@ -212,6 +246,9 @@
                             </th>
                             <th scope="col">
                                 驗證碼字元數
+                            </th>
+                            <th scope="col">
+                                驗證碼重設 selector
                             </th>
                             <th scope="col">
                             </th>
@@ -313,8 +350,8 @@
                     <strong>說明：</strong>
                     <ul>
                         <li>「<code>URL</code>」可以使用萬用字元 <code>*</code> 符號。</li>
-                        <li>「<code>URL</code>」沒輸入，代表不具備功能。</li>
-                        <li>只有符合 URL 的網址，才會把所有checkbox 打勾。</li>
+                        <li>「<code>URL</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
+                        <li>只有符合 URL 的網址，才會把所有checkbox 打勾。不建議套用到所有網頁，因為會造成很多困擾！</li>
                     </ul>
                 </div>
                 <hr />
@@ -634,6 +671,9 @@
                         <input class="form-control" id="maxlength_@node@" value="4" />
                     </td>
                     <td>
+                        <input class="form-control" id="captcha_selector_@node@" value="" />
+                    </td>
+                    <td>
                         <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
                             刪除
                         </button>
@@ -663,7 +703,7 @@
                                 Javascript
                             </label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="injectjs_script_@node@" rows="4"></textarea>
+                                <textarea class="form-control" id="injectjs_script_@node@" rows="7"></textarea>
                             </div>
                         </div>
                     </td>

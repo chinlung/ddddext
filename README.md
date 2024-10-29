@@ -29,9 +29,11 @@ https://github.com/max32002/ddddext/releases
 * 網頁驗證碼自動輸入使用教學 https://youtu.be/wZy4BQ-z-S4
 * 自動打勾+輸入欄位內容 https://youtu.be/98YikOWDLjo
 * 在特定欄位自動打勾/移除勾勾 https://youtu.be/q17yvLtRato
-* 示範設定 cookie 內容 https://youtu.be/gGMW_CvFpmE
-* 注入 Javascript 到網頁(1) https://youtu.be/CmViGxh0IAM
-* 注入 Javascript 到網頁(2) https://youtu.be/1tOjwEo2gbQ
+* 設定 cookie 內容 https://youtu.be/gGMW_CvFpmE
+* 搶車票 https://youtu.be/CmViGxh0IAM
+* 搶票 https://youtu.be/1tOjwEo2gbQ
+* 掛號 https://youtu.be/1vCm3NjVsYY
+* cityline https://youtu.be/HTotEq36E9s
 
 
 # Feature
@@ -55,8 +57,8 @@ https://github.com/max32002/ddddext/releases
 (透過原始碼的執行方法)
 
 透過原始碼執行 DDDDEXT 有2種執行方式：
-1. Load unpacked extension
-2. 下指令執行主程式
+1. Load unpacked extension (只可以使用部份功能)
+2. 下指令執行主程式 (可以使用完整功能)
 
 ## Load unpacked extension
 
@@ -66,7 +68,7 @@ DDDDEXT 可以不安裝就在各個平台的 chrome 瀏覽器上執行，使用�
 
 透過 start.py (或 start.exe) 並按下「搶票」開出來的瀏覽，請不要去修改「OCR Server URL」的內容值，使用預設的 「http://127.0.0.1:16888/」 即可。
 
-## 下指令執行主程式
+## 執行 start 主程式
 透過原始碼執行ddddext教學影片：
 https://youtu.be/HpVG91j0lbI
 
@@ -113,7 +115,7 @@ PS:
 
 # Extension Privacy 
 
-(DDDD Plus擴充功能隱私權政策)
+(DDDDEXT Plus擴充功能隱私權政策)
 
 ## 產品如何收集、使用及分享使用者資料
 
@@ -125,4 +127,6 @@ PS:
 
 ## 擴充功能主要功能：
 
-* 特定網頁支援驗證碼功能, 需要同時開啟 DDDDEXT 主程式。
+* 特定網頁驗證碼自動輸入功能, 需要同時開啟 DDDDEXT 主程式。
+* 特定網頁自動填入內容值。
+* 特定網頁內容打勾/取消打勾。

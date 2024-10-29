@@ -153,6 +153,9 @@
                                 驗證碼字元數
                             </th>
                             <th scope="col">
+                                驗證碼重設 selector
+                            </th>
+                            <th scope="col">
                             </th>
                         </tr>
                     </thead>
@@ -178,7 +181,7 @@
             </div>
             <!-- tab 4 -->
             <div aria-labelledby="autofill-tab" class="tab-pane fade" id="autofill-tab-pane" role="tabpanel" tabindex="2">
-                <p>針對不同的網頁內容，在自動填入內容時，會需要不同的設定值(selector)，selector 使用方式請參考個案教學：<br/>
+                <p>針對不同的網頁內容，在自動填入內容時，會需要不同的設定值(selector)，selector 使用方式請參考個案教學：<br />
                     <a href='https://ddddext.max-everyday.com/case/' target="_blank">https://ddddext.max-everyday.com/case/</a> (另開新視窗)
                 </p>
                 <table class="table">
@@ -252,8 +255,8 @@
                     <strong>說明：</strong>
                     <ul>
                         <li>「<code>URL</code>」可以使用萬用字元 <code>*</code> 符號。</li>
-                        <li>「<code>URL</code>」沒輸入，代表不具備功能。</li>
-                        <li>只有符合 URL 的網址，才會把所有checkbox 打勾。</li>
+                        <li>「<code>URL</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
+                        <li>只有符合 URL 的網址，才會把所有checkbox 打勾。不建議套用到所有網頁，因為會造成很多困擾！</li>
                     </ul>
                 </div>
                 <hr />
@@ -450,6 +453,9 @@
                 </td>
                 <td>
                     <input class="form-control" id="maxlength_@node@" value="4" />
+                </td>
+                <td>
+                    <input class="form-control" id="captcha_selector_@node@" value="" />
                 </td>
                 <td>
                     <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
