@@ -29,7 +29,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.27)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.28)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_DDDDEXT_EXTENSION_NAME = "ddddextplus_1.0.0"
 CONST_SERVER_PORT = 16888
@@ -268,7 +268,7 @@ class SendkeyHandler(tornado.web.RequestHandler):
         #print("SendkeyHandler")
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
 
         _body = None
         is_pass_check = True

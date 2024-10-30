@@ -41,64 +41,32 @@ function get_remote_url(settings) {
 }
 
 async function webdriver_sendkey(settings, selector, answer) {
-    let api_url = get_remote_url(settings);
-    //console.log("api_url:" + api_url);
-    if(api_url.indexOf("127.0.0.")>-1) {
-        let body = {
-            token: settings.token,
-            command: [
-            {type: 'sendkey', selector: selector, text: answer}
-        ]};
-        body = JSON.stringify(body);
-
-        let bundle = {
-            action: 'post',
-            data: {
-                'url': api_url + 'sendkey',
-                'post_data': body,
-            }
-        };
-        let bundle_string = JSON.stringify(bundle);
-        //console.log(bundle);
-        const return_answer = await chrome.runtime.sendMessage(bundle);
-        //console.log(return_answer);
-    }
+    const cmd = [{type: 'sendkey', selector: selector, text: answer}];
+    webdriver_command(settings, selector, cmd);
 }
 
 async function webdriver_location_sendkey(settings, selector, answer, location) {
-    let api_url = get_remote_url(settings);
-    //console.log("api_url:" + api_url);
-    if(api_url.indexOf("127.0.0.")>-1) {
-        let body = {
-            token: settings.token,
-            command: [
-            {type: 'sendkey', selector: selector, text: answer, location: location}
-        ]};
-        body = JSON.stringify(body);
-
-        let bundle = {
-            action: 'post',
-            data: {
-                'url': api_url + 'sendkey',
-                'post_data': body,
-            }
-        };
-        let bundle_string = JSON.stringify(bundle);
-        //console.log(bundle);
-        const return_answer = await chrome.runtime.sendMessage(bundle);
-        //console.log(return_answer);
-    }
+    const cmd = [{type: 'sendkey', selector: selector, text: answer, location: location}];
+    webdriver_location_command(settings, selector, location, cmd);
 }
 
 async function webdriver_click(settings, selector) {
+    const cmd = [{type: 'click', selector: selector}];
+    webdriver_command(settings, selector, cmd);
+}
+
+async function webdriver_location_click(settings, selector, location) {
+    const cmd = [{type: 'click', selector: selector, location: location}];
+    webdriver_location_command(settings, selector, location, cmd);
+}
+
+async function webdriver_command(settings, selector, command) {
     let api_url = get_remote_url(settings);
     //console.log("api_url:" + api_url);
     if(api_url.indexOf("127.0.0.")>-1) {
         let body = {
             token: settings.token,
-            command: [
-            {type: 'click', selector: selector}
-        ]};
+            command: command};
         body = JSON.stringify(body);
 
         let bundle = {
@@ -115,15 +83,13 @@ async function webdriver_click(settings, selector) {
     }
 }
 
-async function webdriver_location_click(settings, selector, location) {
+async function webdriver_location_command(settings, selector, location, command) {
     let api_url = get_remote_url(settings);
     //console.log("api_url:" + api_url);
     if(api_url.indexOf("127.0.0.")>-1) {
         let body = {
             token: settings.token,
-            command: [
-            {type: 'click', selector: selector, location: location}
-        ]};
+            command: command};
         body = JSON.stringify(body);
 
         let bundle = {

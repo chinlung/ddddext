@@ -8,6 +8,7 @@ var ocr_config = {
     input_selector: "",
     submit_selector: ""
 };
+
 function get_ocr_image(captcha_selector) {
     //console.log("get_ocr_image: " + captcha_selector);
     let image_data = "";
@@ -278,12 +279,14 @@ storage.get('settings', function(items) {
 });
 
 var inputInterval = setInterval(() => {
-    storage.get('status', function(items) {
-        if (items.status && items.status == 'ON') {
-            ocr_main(settings);
-            checkall_main(settings);
-        } else {
-            //console.log('maxbot status is not OFF');
-        }
-    });
+    if (storage) {
+        storage.get('status', function(items) {
+            if (items.status && items.status == 'ON') {
+                ocr_main(settings);
+                checkall_main(settings);
+            } else {
+                //console.log('maxbot status is not OFF');
+            }
+        });
+    }
 }, 100);
