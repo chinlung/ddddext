@@ -28,7 +28,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.28)"
+CONST_APP_VERSION = "DDDDEXT (2024.04.29)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -207,13 +207,7 @@ def push_injectjs_to_extension(config_dict, extension_path):
                         content_scripts_dict["js"] = ["jquery.min.js","js/common.js", "js/" + js_filename]
 
                         js_filepath = os.path.join(js_folder, js_filename)
-                        #print("js_filepath:", js_filepath)
-                        try:
-                            with open(js_filepath, "w") as text_file:
-                                text_file.write(script_text)
-                        except Exception as e:
-                            print(e)
-                            pass
+                        util.write_string_to_file(js_filepath, script_text)
                         clean_scripts_dict_array.append(content_scripts_dict)
 
         manifest_dict["content_scripts"] = clean_scripts_dict_array
@@ -318,7 +312,7 @@ async def nodriver_resize_window(driver, config_dict):
             except Exception as exc:
                 # cannot unpack non-iterable NoneType object
                 print(exc)
-                print("請關閉所有視窗後，重新操作一次")
+                #print("請關閉所有視窗後，重新操作一次")
                 pass
 
 # we only handle last tab.

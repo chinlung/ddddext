@@ -271,7 +271,7 @@
                     <ul>
                         <li>「<code>驗證碼網址</code>」可以使用萬用字元 <code>*</code> 符號。</li>
                         <li>「<code>驗證碼網址</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
-                        <li>驗證碼重設 selector 欄位內容可以不輸入。欄位功能：當遇到OCR 失敗時, 程式要自動去按那裡, 重新產生驗證碼。有些網站是點擊驗證碼圖片重新取得，幾乎都有另外附重新取得驗證碼的按鈕。</li>
+                        <li>「驗證碼重設 selector」 欄位內容可以不輸入。欄位功能：當遇到OCR 失敗時, 程式要自動去按那裡, 重新產生驗證碼。有些網站是點擊驗證碼圖片重新取得，幾乎都有另外附重新取得驗證碼的按鈕。</li>
                     </ul>
                 </div>
             </div>
@@ -398,6 +398,9 @@
             </div>
             <!-- tab 6 -->
             <div aria-labelledby="injectjs-tab" class="tab-pane fade" id="injectjs-tab-pane" role="tabpanel" tabindex="2">
+                <p>針對不同的網頁內容，在自動注入 javascript 內容，使用方式請參考個案教學：<br />
+                    <a href='https://ddddext.max-everyday.com/script/' target="_blank">https://ddddext.max-everyday.com/script/</a> (另開新視窗)
+                </p>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -534,9 +537,12 @@
                 <div class="modal-body">
                     <div class="col-12 mb-3">
                         <label for="json_url" class="form-label">JSON 設定值網址</label>
-                        <div class="input-group">
+                        <div>
                             <input type="text" class="form-control" id="json_url" placeholder="JSON 設定值網址" required="" />
                         </div>
+                         <span>
+                            請輸入 http:// 或 https:// 開頭的網址
+                        </span>
                     </div>
                 </div>
                 <div class="modal-footer">
