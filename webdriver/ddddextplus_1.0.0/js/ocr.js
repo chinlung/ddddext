@@ -1,4 +1,3 @@
-const storage = chrome.storage.local;
 var settings = null;
 var ocrInterval = null;
 var ocr_config = {
@@ -268,7 +267,7 @@ function run_injectjs(settings) {
 
 console.log('start ocr.js');
 
-storage.get('settings', function(items) {
+chrome.storage.local.get('settings', function(items) {
     if (items.settings) {
         settings = items.settings;
         if (settings) {
@@ -279,14 +278,12 @@ storage.get('settings', function(items) {
 });
 
 var inputInterval = setInterval(() => {
-    if (storage) {
-        storage.get('status', function(items) {
-            if (items.status && items.status == 'ON') {
-                ocr_main(settings);
-                checkall_main(settings);
-            } else {
-                //console.log('maxbot status is not OFF');
-            }
-        });
-    }
+    chrome.storage.local.get('status', function(items) {
+        if (items.status && items.status == 'ON') {
+            ocr_main(settings);
+            checkall_main(settings);
+        } else {
+            //console.log('maxbot status is not OFF');
+        }
+    });
 }, 100);
