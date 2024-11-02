@@ -32,7 +32,11 @@ chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
     if (message && message.hasOwnProperty("answer")) {
         let is_valid_anwser = false;
-        if (message.answer.length == ocr_config.captcha_length) {
+        if (ocr_config.captcha_length > 0) {
+            if (message.answer.length == ocr_config.captcha_length) {
+                is_valid_anwser = true;
+            }
+        } else {
             is_valid_anwser = true;
         }
         if (is_valid_anwser) {

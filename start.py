@@ -29,7 +29,7 @@ try:
 except Exception as exc:
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.04.30)"
+CONST_APP_VERSION = "DDDDEXT (2024.05.01)"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
 CONST_DDDDEXT_EXTENSION_NAME = "ddddextplus_1.0.0"
 CONST_SERVER_PORT = 16888
