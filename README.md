@@ -113,6 +113,12 @@ PS:
 * nodriver_ddddext.py : 使用的元件是nodriver，用來把擴充功能放進瀏覽器。
 * start.py : 編輯 settings.json 的 GUI 介面。提供圖片OCR功能給chrome擴充功能。
 
+# Questions and Answers
+### Q：無法在 Safari 瀏覽器運行
+A：由於完整功能是透過 nodriver 在實作，所以只支援 chrome 瀏覽器。
+
+nodirver 傳送門：https://github.com/ultrafunkamsterdam/nodriver
+
 
 # Extension Privacy 
 
