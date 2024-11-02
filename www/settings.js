@@ -330,7 +330,7 @@ function get_captcha_array() {
                 item["captcha_renew"] = $("#captcha_renew_selector_" + i).val();
                 item["input"] = $("#input_selector_" + i).val();
                 item["maxlength"] = $("#maxlength_" + i).val();
-                if (item["maxlength"] == "" || item["maxlength"] == "0" ) {
+                if (item["maxlength"] == "" || item["maxlength"] == "0") {
                     item["maxlength"] = 0;
                 }
                 captcha.push(item);
@@ -354,8 +354,15 @@ function get_injectjs_array() {
             if ($("#injectjs_url_" + i).length) {
                 item["url"] = $("#injectjs_url_" + i).val();
                 item["script"] = $("#injectjs_script_" + i).val();
-                item["run_at"] = $("#captcha_run_at_" + i).val();
-                item["world"] = $("#captcha_world_" + i).val();
+                item["run_at"] = $("#injectjs_run_at_" + i).val();
+
+                item["world"] = $("#injectjs_world_" + i).val();
+                if (item["run_at"] == "") {
+                    item["run_at"] = "document_end";
+                }
+                if (item["world"] == "") {
+                    item["world"] = "ISOLATED";
+                }
                 injectjs.push(item);
             }
         }
@@ -730,6 +737,9 @@ function injectjs_new_with_value(item) {
         $("#injectjs-container").append(html);
         $("#injectjs-actionbar").insertAfter($("#injectjs-container tr").last());
 
+        if (item === undefined) {
+            item = { url: "", script: "", run_at: "document_end", world: "ISOLATED" };
+        }
         if (item) {
             $("#injectjs_url_" + node).val(item["url"]);
             $("#injectjs_script_" + node).val(item["script"]);

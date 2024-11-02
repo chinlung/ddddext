@@ -11,6 +11,7 @@
                 "enable": true,
                 "url": "",
                 "captcha": "",
+                "captcha_renew": "",
                 "input": "",
                 "maxlength": "4"
             }

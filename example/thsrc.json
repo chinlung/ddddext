@@ -11,6 +11,7 @@
                 "enable": true,
                 "url": "https://irs.thsrc.com.tw/IMINT/*",
                 "captcha": "#BookingS1Form_homeCaptcha_passCode",
+                "captcha_renew": "",
                 "input": "#securityCode",
                 "maxlength": "4"
             }

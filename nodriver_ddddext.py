@@ -28,7 +28,7 @@ except Exception as exc:
     print(exc)
     pass
 
-CONST_APP_VERSION = "DDDDEXT (2024.05.01)"
+CONST_APP_VERSION = "DDDDEXT (2024.05.02)"
 
 CONST_MAXBOT_ANSWER_ONLINE_FILE = "MAXBOT_ONLINE_ANSWER.txt"
 CONST_MAXBOT_CONFIG_FILE = "settings.json"
@@ -198,12 +198,26 @@ def push_injectjs_to_extension(config_dict, extension_path):
                     js_index += 1
                     js_filename = "tmp_" + str(js_index) + ".js"
                     script_url = each_injectjs["url"]
+                    if script_url == "*" or script_url == "" :
+                        script_url = "<all_urls>"
                     script_text = each_injectjs["script"]
+                    
+                    run_at = ""
+                    world = ""
+                    if "run_at" in each_injectjs:
+                        each_injectjs["run_at"]
+                    if "world" in each_injectjs:
+                        world = each_injectjs["world"]
+                    if run_at == "":
+                        run_at = "document_end"
+                    if world == "":
+                        world = "ISOLATED"
+                    
                     if each_injectjs["enable"] and len(script_url) > 0 and len(script_text) > 0:
                         content_scripts_dict = {}
                         content_scripts_dict["matches"] = [script_url]
-                        content_scripts_dict["run_at"] = each_injectjs["run_at"]
-                        content_scripts_dict["world"] = each_injectjs["world"]
+                        content_scripts_dict["run_at"] = run_at
+                        content_scripts_dict["world"] = world
                         content_scripts_dict["js"] = ["jquery.min.js","js/common.js", "js/" + js_filename]
 
                         js_filepath = os.path.join(js_folder, js_filename)

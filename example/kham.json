@@ -11,6 +11,7 @@
                 "enable": true,
                 "url": "https://kham.com.tw/*",
                 "captcha": "#chk_pic",
+                "captcha_renew": "",
                 "input": "#CHK",
                 "maxlength": "4"
             }
