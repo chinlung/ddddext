@@ -1,4 +1,3 @@
-const storage = chrome.storage.local;
 var settings = null;
 var ocrInterval = null;
 var ocr_config = {
@@ -33,7 +32,11 @@ chrome.runtime.onMessage.addListener((message) => {
     //console.log('sent from background', message);
     if (message && message.hasOwnProperty("answer")) {
         let is_valid_anwser = false;
-        if (message.answer.length == ocr_config.captcha_length) {
+        if (ocr_config.captcha_length > 0) {
+            if (message.answer.length == ocr_config.captcha_length) {
+                is_valid_anwser = true;
+            }
+        } else {
             is_valid_anwser = true;
         }
         if (is_valid_anwser) {
@@ -268,7 +271,7 @@ function run_injectjs(settings) {
 
 console.log('start ocr.js');
 
-storage.get('settings', function(items) {
+chrome.storage.local.get('settings', function(items) {
     if (items.settings) {
         settings = items.settings;
         if (settings) {
@@ -279,14 +282,12 @@ storage.get('settings', function(items) {
 });
 
 var inputInterval = setInterval(() => {
-    if (storage) {
-        storage.get('status', function(items) {
-            if (items.status && items.status == 'ON') {
-                ocr_main(settings);
-                checkall_main(settings);
-            } else {
-                //console.log('maxbot status is not OFF');
-            }
-        });
-    }
+    chrome.storage.local.get('status', function(items) {
+        if (items.status && items.status == 'ON') {
+            ocr_main(settings);
+            checkall_main(settings);
+        } else {
+            //console.log('maxbot status is not OFF');
+        }
+    });
 }, 100);

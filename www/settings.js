@@ -22,7 +22,7 @@ const proxy_server_port = document.querySelector('#proxy_server_port');
 const window_size = document.querySelector('#window_size');
 const play_sound_filename = document.querySelector('#play_sound_filename');
 
-const adlbock = document.querySelector('#adlbock');
+const adblock = document.querySelector('#adblock');
 const hide_some_image = document.querySelector('#hide_some_image');
 const block_facebook_network = document.querySelector('#block_facebook_network');
 
@@ -32,6 +32,7 @@ const remote_url = document.querySelector('#remote_url');
 const PUBLIC_SERVER_URL = "http://maxbot.dropboxlike.com:16888/";
 
 const json_url = document.querySelector('#json_url');
+const show_injectjs_advanced_field = document.querySelector('#show_injectjs_advanced_field');
 
 var settings = null;
 
@@ -163,6 +164,14 @@ function maxbot_import_api() {
 
 function checkUsePublicServer() {
     remote_url.value = PUBLIC_SERVER_URL;
+}
+
+function showHideInjectjsAdvnacedField() {
+    if (show_injectjs_advanced_field.checked) {
+        $("div[injectjs-advanced='true']").removeClass("disappear");
+    } else {
+        $("div[injectjs-advanced='true']").addClass("disappear");
+    }
 }
 
 function jon_url_onchange() {
@@ -321,6 +330,9 @@ function get_captcha_array() {
                 item["captcha_renew"] = $("#captcha_renew_selector_" + i).val();
                 item["input"] = $("#input_selector_" + i).val();
                 item["maxlength"] = $("#maxlength_" + i).val();
+                if (item["maxlength"] == "" || item["maxlength"] == "0") {
+                    item["maxlength"] = 0;
+                }
                 captcha.push(item);
             }
         }
@@ -342,8 +354,15 @@ function get_injectjs_array() {
             if ($("#injectjs_url_" + i).length) {
                 item["url"] = $("#injectjs_url_" + i).val();
                 item["script"] = $("#injectjs_script_" + i).val();
-                item["run_at"] = "document_end";
-                item["world"] = "ISOLATED";
+                item["run_at"] = $("#injectjs_run_at_" + i).val();
+
+                item["world"] = $("#injectjs_world_" + i).val();
+                if (item["run_at"] == "") {
+                    item["run_at"] = "document_end";
+                }
+                if (item["world"] == "") {
+                    item["world"] = "ISOLATED";
+                }
                 injectjs.push(item);
             }
         }
@@ -544,6 +563,7 @@ new_checkall_button.addEventListener('click', checkall_new);
 
 ocr_captcha_use_public_server.addEventListener('change', checkUsePublicServer);
 json_url.addEventListener('input', jon_url_onchange);
+show_injectjs_advanced_field.addEventListener('change', showHideInjectjsAdvnacedField);
 
 const onchange_tag_list = ["input", "select", "textarea"];
 onchange_tag_list.forEach((tag) => {
@@ -600,7 +620,11 @@ function captcha_new_with_value(item) {
             $("#captcha_selector_" + node).val(item["captcha"]);
             $("#captcha_renew_selector_" + node).val(item["captcha_renew"]);
             $("#input_selector_" + node).val(item["input"]);
-            $("#maxlength_" + node).val(item["maxlength"]);
+            let maxlength = item["maxlength"];
+            if (maxlength == 0) {
+                maxlength = "";
+            }
+            $("#maxlength_" + node).val(maxlength);
         }
     }
 }
@@ -713,9 +737,14 @@ function injectjs_new_with_value(item) {
         $("#injectjs-container").append(html);
         $("#injectjs-actionbar").insertAfter($("#injectjs-container tr").last());
 
+        if (item === undefined) {
+            item = { url: "", script: "", run_at: "document_end", world: "ISOLATED" };
+        }
         if (item) {
             $("#injectjs_url_" + node).val(item["url"]);
             $("#injectjs_script_" + node).val(item["script"]);
+            $("#injectjs_run_at_" + node).val(item["run_at"]);
+            $("#injectjs_world_" + node).val(item["world"]);
         }
     }
 }

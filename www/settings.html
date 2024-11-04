@@ -271,6 +271,7 @@
                     <ul>
                         <li>「<code>驗證碼網址</code>」可以使用萬用字元 <code>*</code> 符號。</li>
                         <li>「<code>驗證碼網址</code>」沒輸入，代表不具備功能。不知道輸入什麼，可以輸入萬用字元 <code>*</code> 符號，代表每一個網頁都符合。</li>
+                        <li>「驗證碼字元數」 欄位內容可以不輸入，不輸入代表驗證碼每次的長度是變動的。</li>
                         <li>「驗證碼重設 selector」 欄位內容可以不輸入。欄位功能：當遇到OCR 失敗時, 程式要自動去按那裡, 重新產生驗證碼。有些網站是點擊驗證碼圖片重新取得，幾乎都有另外附重新取得驗證碼的按鈕。</li>
                     </ul>
                 </div>
@@ -417,6 +418,8 @@
                     <tbody id="injectjs-container">
                         <tr id="injectjs-actionbar">
                             <td colspan="2">
+                                <input class="form-check-input" type="checkbox" id="show_injectjs_advanced_field" />
+                                <label for="show_injectjs_advanced_field">顯示進階設定值</label>
                             </td>
                             <td>
                                 <button class="btn btn-success" id="new_injectjs_btn" type="button">
@@ -678,7 +681,7 @@
                         <input class="form-control" id="maxlength_@node@" value="4" />
                     </td>
                     <td>
-                        <input class="form-control" id="captcha_selector_@node@" value="" />
+                        <input class="form-control" id="captcha_renew_selector_@node@" value="" />
                     </td>
                     <td>
                         <button class="btn btn-danger" onclick="captcha_remove(@node@);" type="button">
@@ -711,6 +714,29 @@
                             </label>
                             <div class="col-sm-10">
                                 <textarea class="form-control" id="injectjs_script_@node@" rows="7"></textarea>
+                            </div>
+                        </div>
+                        <div injectjs-advanced="true" class="row mb-3 disappear">
+                            <label class="col-sm-2 col-form-label form-check-label" for="injectjs_run_at_@node@">
+                                run at
+                            </label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="injectjs_run_at_@node@">
+                                    <option value="document_start">DOM 仍在載入中</option>
+                                    <option value="document_end">DOM 已完成加載，圖片或資源可能仍在下載</option>
+                                    <option value="document_idle">所有資源已完成載入。</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div injectjs-advanced="true" class="row mb-3 disappear">
+                            <label class="col-sm-2 col-form-label form-check-label" for="injectjs_world_@node@">
+                                world
+                            </label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="injectjs_world_@node@">
+                                    <option value="ISOLATED">獨立世界，擴充功能專屬的執行環境</option>
+                                    <option value="MAIN">DOM 的主要世界，也就是與代管網頁 JavaScript 共用的執行環境</option>
+                                </select>
                             </div>
                         </div>
                     </td>

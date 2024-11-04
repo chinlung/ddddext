@@ -85,6 +85,9 @@ function get_captcha_array() {
                 item["captcha_renew"] = $("#captcha_renew_selector_" + i).val();
                 item["input"] = $("#input_selector_" + i).val();
                 item["maxlength"] = $("#maxlength_" + i).val();
+                if (item["maxlength"] == "" || item["maxlength"] == "0" ) {
+                    item["maxlength"] = 0;
+                }
                 captcha.push(item);
             }
         }
@@ -241,7 +244,11 @@ function captcha_new_with_value(item) {
             $("#captcha_selector_" + node).val(item["captcha"]);
             $("#captcha_renew_selector_" + node).val(item["captcha_renew"]);
             $("#input_selector_" + node).val(item["input"]);
-            $("#maxlength_" + node).val(item["maxlength"]);
+            let maxlength = item["maxlength"];
+            if (maxlength == 0) {
+                maxlength = "";
+            }
+            $("#maxlength_" + node).val(maxlength);
         }
     }
 }

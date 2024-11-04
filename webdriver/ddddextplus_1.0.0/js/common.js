@@ -10,13 +10,13 @@ function get_target_item_with_order(mode, matched_block) {
             center_index = parseInt(last_index / 2);
             random_index = getRandom(0, last_index)
         }
-        if (mode == "from top to bottom")
+        if (mode.toLowerCase() == "from top to bottom")
             target_area = matched_block[0];
-        if (mode == "from bottom to top")
+        if (mode.toLowerCase() == "from bottom to top")
             target_area = matched_block[last_index];
-        if (mode == "center")
+        if (mode.toLowerCase() == "center")
             target_area = matched_block[center_index];
-        if (mode == "random")
+        if (mode.toLowerCase() == "random")
             target_area = matched_block[random_index];
     }
     return target_area;
@@ -42,25 +42,25 @@ function get_remote_url(settings) {
 
 async function webdriver_sendkey(settings, selector, answer) {
     const cmd = [{type: 'sendkey', selector: selector, text: answer}];
-    webdriver_command(settings, selector, cmd);
+    webdriver_command(settings, cmd);
 }
 
 async function webdriver_location_sendkey(settings, selector, answer, location) {
     const cmd = [{type: 'sendkey', selector: selector, text: answer, location: location}];
-    webdriver_location_command(settings, selector, location, cmd);
+    webdriver_location_command(settings, location, cmd);
 }
 
 async function webdriver_click(settings, selector) {
     const cmd = [{type: 'click', selector: selector}];
-    webdriver_command(settings, selector, cmd);
+    webdriver_command(settings, cmd);
 }
 
 async function webdriver_location_click(settings, selector, location) {
     const cmd = [{type: 'click', selector: selector, location: location}];
-    webdriver_location_command(settings, selector, location, cmd);
+    webdriver_location_command(settings, location, cmd);
 }
 
-async function webdriver_command(settings, selector, command) {
+async function webdriver_command(settings, command) {
     let api_url = get_remote_url(settings);
     //console.log("api_url:" + api_url);
     if(api_url.indexOf("127.0.0.")>-1) {
@@ -83,7 +83,7 @@ async function webdriver_command(settings, selector, command) {
     }
 }
 
-async function webdriver_location_command(settings, selector, location, command) {
+async function webdriver_location_command(settings, location, command) {
     let api_url = get_remote_url(settings);
     //console.log("api_url:" + api_url);
     if(api_url.indexOf("127.0.0.")>-1) {
