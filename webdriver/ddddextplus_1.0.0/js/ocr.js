@@ -216,24 +216,22 @@ function checkall() {
 
 function checkall_main(settings) {
     if (settings) {
-        if (settings) {
-            settings.checkall.forEach((d) => {
-                //console.log(d);
-                let is_match_url = false;
-                if (d.enable) {
-                    if (d.url == "") {
-                        is_match_url = false;
-                    } else {
-                        is_match_url = wildcardMatchRegExp(document.location.href, d.url);
-                    }
+        settings.checkall.forEach((d) => {
+            //console.log(d);
+            let is_match_url = false;
+            if (d.enable) {
+                if (d.url == "") {
+                    is_match_url = false;
+                } else {
+                    is_match_url = wildcardMatchRegExp(document.location.href, d.url);
                 }
-                //console.log(d.url);
-                //console.log(is_match_url);
-                if (is_match_url) {
-                    checkall();
-                }
-            });
-        }
+            }
+            //console.log(d.url);
+            //console.log(is_match_url);
+            if (is_match_url) {
+                checkall();
+            }
+        });
     }
 }
 
