@@ -159,3 +159,86 @@ async function webdriver_location_eval(settings, text, location) {
 function playsound(){
     chrome.runtime.sendMessage({action: 'playsound'});
 }
+
+
+function normalizeChineseNumeric(keyword) {
+    let result = "";
+    for (let character of keyword) {
+        let convertedInteger = chineseNumericToInt(character);
+        if (convertedInteger !== null) {
+            result += String(convertedInteger);
+        }
+    }
+    return result;
+}
+
+function chineseNumericToInt(character) {
+    let result = null;
+    const numericDictionary = getChineseNumeric();
+    for (let key in numericDictionary) {
+        for (let item of numericDictionary[key]) {
+            if (character.toLowerCase() === item) {
+                result = parseInt(key);
+                break;
+            }
+        }
+        if (result !== null) {
+            break;
+        }
+    }
+    return result;
+}
+
+function getChineseNumeric() {
+    const numericDictionary = {};
+    numericDictionary['0'] = ['0', '０', 'zero', '零'];
+    numericDictionary['1'] = ['1', '１', 'one', '一', '壹', '①', '❶', '⑴'];
+    numericDictionary['2'] = ['2', '２', 'two', '二', '貳', '②', '❷', '⑵'];
+    numericDictionary['3'] = ['3', '３', 'three', '三', '叁', '③', '❸', '⑶'];
+    numericDictionary['4'] = ['4', '４', 'four', '四', '肆', '④', '❹', '⑷'];
+    numericDictionary['5'] = ['5', '５', 'five', '五', '伍', '⑤', '❺', '⑸'];
+    numericDictionary['6'] = ['6', '６', 'six', '六', '陸', '⑥', '❻', '⑹'];
+    numericDictionary['7'] = ['7', '７', 'seven', '七', '柒', '⑦', '❼', '⑺'];
+    numericDictionary['8'] = ['8', '８', 'eight', '八', '捌', '⑧', '❽', '⑻'];
+    numericDictionary['9'] = ['9', '９', 'nine', '九', '玖', '⑨', '❾', '⑼'];
+    return numericDictionary;
+}
+
+function formatQuotaString(formattedHtmlText) {
+    formattedHtmlText = formattedHtmlText.replace('「', '【');
+    formattedHtmlText = formattedHtmlText.replace('『', '【');
+    formattedHtmlText = formattedHtmlText.replace('〔', '【');
+    formattedHtmlText = formattedHtmlText.replace('﹝', '【');
+    formattedHtmlText = formattedHtmlText.replace('〈', '【');
+    formattedHtmlText = formattedHtmlText.replace('《', '【');
+    formattedHtmlText = formattedHtmlText.replace('［', '【');
+    formattedHtmlText = formattedHtmlText.replace('〖', '【');
+    formattedHtmlText = formattedHtmlText.replace('[', '【');
+    formattedHtmlText = formattedHtmlText.replace('（', '【');
+    formattedHtmlText = formattedHtmlText.replace('(', '【');
+
+    formattedHtmlText = formattedHtmlText.replace('」', '】');
+    formattedHtmlText = formattedHtmlText.replace('』', '】');
+    formattedHtmlText = formattedHtmlText.replace('〕', '】');
+    formattedHtmlText = formattedHtmlText.replace('﹞', '】');
+    formattedHtmlText = formattedHtmlText.replace('〉', '】');
+    formattedHtmlText = formattedHtmlText.replace('》', '】');
+    formattedHtmlText = formattedHtmlText.replace('］', '】');
+    formattedHtmlText = formattedHtmlText.replace('〗', '】');
+    formattedHtmlText = formattedHtmlText.replace(']', '】');
+    formattedHtmlText = formattedHtmlText.replace('）', '】');
+    formattedHtmlText = formattedHtmlText.replace(')', '】');
+    return formattedHtmlText;
+}
+
+function findBetween(string, startDelimiter, endDelimiter) {
+    let result = "";
+    try {
+        const startIndex = string.indexOf(startDelimiter) + startDelimiter.length;
+        const endIndex = string.indexOf(endDelimiter, startIndex);
+        result = string.substring(startIndex, endIndex);
+    } catch (error) {
+        // Handle error
+    }
+    return result;
+}

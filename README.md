@@ -36,6 +36,7 @@ https://github.com/max32002/ddddext/releases
 * cityline https://youtu.be/HTotEq36E9s
 * 2024-04-28 版功能介紹: https://youtu.be/9QOpJkNnvP8
 * 2024-05-02 版功能介紹: https://youtu.be/gdGRuLmD7B4
+* 2024-05-03 版功能介紹: https://youtu.be/oXTCoiLoKJo
 
 
 # Feature

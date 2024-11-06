@@ -1,0 +1,88 @@
+{
+    "homepage": "https://kktix.com/users/sign_in?back_to=https%3A%2F%2Fkktix.com%2F",
+    "refresh_datetime": "",
+    "memo": "// ==UserScript==\n// @name          kktix auto submit\n// @version       1.1\n// ==/UserScript==\n\n\u8173\u672c\u7684\u4f7f\u7528\u65b9\u6cd5\uff1a\n* Step 1: \u8f38\u5165 Javascript #1 \u88e1\u7684\u5e33\u865f\u5bc6\u78bc\u9032\u884c\u81ea\u52d5\u767b\u5165\u3002\n* Step 2: \u4fee\u6539 Javascript #3 \u88e1\u7684 ticket_number=\u6307\u5b9a\u5f35\u6578\uff0c\u9810\u8a2d\u503c\u662f 2\n* Step 3: \u6309\u300c\u6436\u7968\u300d\n\n\u76ee\u524d\u63d0\u4f9b\u7684 javascript \u6709\uff1a\nJavascript #1 /users/sign_in* \u529f\u80fd\u662f\uff1a\u81ea\u52d5\u767b\u5165\u5e33\u865f\nJavascript #2 /events/* \u529f\u80fd\u662f\uff1a\u7db2\u5740\u7684\u8df3\u8f49\u3002\nJavascript #3 /events/*/registrations/new \u529f\u80fd\u662f\uff1a\u6307\u5b9a\u5f35\u6578\uff0c\u6309\u300c\u4e0b\u4e00\u6b65\u300d\u7684\u9001\u51fa\u6309\u9215\u3002\n\nJavascript #3 \u5099\u8a3b\uff1a\n* \u7576\u8f38\u5165\u7684\u95dc\u9375\u5b57\u4f7f\u7528\u4e86\u7a7a\u683c\" \", \u4f8b\u5982\uff1a\"12/01 16:45\", \u4ee3\u8868\u61c9\u8a72\u8981\u540c\u6642\u7b26\u5408 \"12/01\" \u800c\u4e14\u4e5f\u8981\u51fa\u73fe \"16:45\"\n* \u95dc\u9375\u5b57\u4e0d\u5340\u5206\u5927\u5c0f\u5beb\u3002",
+    "ocr_captcha": {
+        "enable": true,
+        "beta": true,
+        "force_submit": true,
+        "captcha": [
+            {
+                "enable": true,
+                "url": "",
+                "captcha": "",
+                "captcha_renew": "",
+                "input": "",
+                "maxlength": "4"
+            }
+        ]
+    },
+    "advanced": {
+        "chrome_extension": true,
+        "adblock": true,
+        "hide_some_image": false,
+        "block_facebook_network": false,
+        "play_sound_filename": "sound_ding-dong.wav",
+        "headless": false,
+        "verbose": false,
+        "remote_url": "\"http://127.0.0.1:16888/\"",
+        "proxy_server_port": "",
+        "window_size": "480,1024"
+    },
+    "autofill": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": ""
+        }
+    ],
+    "autocheck": [
+        {
+            "enable": true,
+            "url": "",
+            "selector": "",
+            "value": false
+        }
+    ],
+    "injectjs": [
+        {
+            "enable": true,
+            "url": "https://kktix.com/users/sign_in*",
+            "script": "let user_id = \"your_account\"; // \u5e33\u865f\nlet user_password = \"your_password\"; // \u5bc6\u78bc\nlet login_delay_interval = 3000; // \u5ef6\u9072\u6309\u4e0b\u9001\u51fa\u6309\u9215\n$(\"#user_login\").val(user_id);\n$(\"#user_password\").val(user_password);\nsetTimeout(() => {\n    $(\"input[type='submit']\").click();\n}, login_delay_interval);\n",
+            "run_at": "document_end",
+            "world": "ISOLATED"
+        },
+        {
+            "enable": true,
+            "url": "https://*.cc/events/*",
+            "script": "function kktix_event_redirect() {\n    const currentUrl = window.location.href;\n    let event_code = currentUrl.split('/')[4];\n    if (event_code.indexOf('?') > -1) {\n        event_code = event_code.split('?')[0];\n    }\n    //console.log(currentUrl);\n    //console.log(event_code);\n    if (event_code) {\n        let button_count = $(\"div.tickets > a.btn-point\").length;\n        //console.log(\"length:\"+button_count);\n        if (button_count == 1) {\n            let new_url = \"https://kktix.com/events/\" + event_code + \"/registrations/new\";\n            location.href = new_url;\n        } else {\n            // do nothing.\n        }\n    }\n}\n\nchrome.storage.local.get('status', function(items) {\n    if (items.status && items.status == 'ON') {\n        setTimeout(() => {\n            kktix_event_redirect();\n        }, 3000);\n    } else {\n        console.log('no status found');\n    }\n});",
+            "run_at": "document_end",
+            "world": "ISOLATED"
+        },
+        {
+            "enable": true,
+            "url": "https://kktix.com/events/*/registrations/new",
+            "script": "var area_keyword_array = [\"\"];\nvar ticket_number = 2;\nvar order_mode = \"random\"\nvar exclude_keyword_array = [\"\u8f2a\u6905\", \"\u8eab\u969c\", \"\u8eab\u5fc3\u969c\u7919\", \"Restricted View\", \"Wheelchair\", \"\u71c8\u67f1\u906e\u853d\", \"\u8996\u7dda\u4e0d\u5b8c\u6574\"];\nvar reload_interval = 500;\n\nfunction kktix_verification_conditions() {\n    let is_text_sent = false;\n\n    let target_row = null;\n    let verification_row = $(\"div.control-group > div.controls > label > input[type='text']\");\n    if (verification_row.length > 0) {\n        let travel_index = 0;\n        if (verification_row.length == 1) {\n            let guess_answer = \"\";\n\n            // now only handle one row style.\n            verification_row.each(function() {\n                let current_index = verification_row.index(this);\n                if (guess_answer.length > 0) {\n                    $(this).val(guess_answer);\n                    is_text_sent = true;\n                }\n            });\n        }\n    }\n\n    return is_text_sent;\n}\n\nfunction kktix_custom_captcha_answer() {\n    let is_text_sent = false;\n\n    let custom_captcha_inner_p = $(\"div.custom-captcha-inner p\");\n    let custom_captcha_inner_input = $(\"div.custom-captcha-inner input[type='text']\");\n\n    let question = custom_captcha_inner_p.text();\n    if(question && question.length > 0 && question.includes('\u6578\u5b57')) {\n        const formatted_question = formatQuotaString(question);\n        let answer = findBetween(formatted_question, \"\u3010\", \"\u3011\");\n        answer = answer.trim();\n        answer = answer.replace(/ /g, '');\n        answer = normalizeChineseNumeric(answer);\n        if (answer.length) {\n            custom_captcha_inner_input.val(answer);\n            is_text_sent = true;\n        }\n    }\n\n    return is_text_sent;\n}\n\nfunction kktix_ticket_unit_clean_exclude(exclude_keyword_array) {\n    for (let i = 0; i < exclude_keyword_array.length; i++) {\n        const current_keyword = exclude_keyword_array[i].toLowerCase().replace(/,/g, \"\");\n        $(\"div.ticket-unit\").each(function() {\n            let html_text = $(this).text().toLowerCase().toLowerCase().replace(/,/g, \"\");\n            //console.log(\"html:\"+html_text);\n            let keyword_control_symbol = false;\n            // AND logic\n            if (current_keyword.indexOf(\" \") > 0) {\n                keyword_control_symbol = true;\n                const keyword_array = current_keyword.split(\" \");\n                let contain = true;\n                for (var j = 0; j < keyword_array.length; j++) {\n                    if (keyword_array[j] == \"\") continue;\n                    if (html_text.indexOf(keyword_array[j]) == -1) {\n                        contain = false;\n                        break;\n                    }\n                }\n                if (contain) {\n                    $(this).remove();\n                }\n            }\n            // OR logic\n            if (current_keyword.indexOf(\"|\") > 0) {\n                keyword_control_symbol = true;\n                const regex = new RegExp(current_keyword);\n                if (regex.test(html_text)) {\n                    $(this).remove();\n                }\n            }\n            // normal keyword\n            if (!keyword_control_symbol) {\n                if (html_text.indexOf(current_keyword) > -1) {\n                    $(this).remove();\n                }\n            }\n        });\n    }\n}\n\nfunction kktix_area_keyword(settings) {\n    let area_keyword_array = [];\n    if (settings) {\n        if (settings.area_auto_select.area_keyword.length > 0) {\n            if (settings.area_auto_select.area_keyword != '\"\"') {\n                area_keyword_array = JSON.parse('[' + settings.area_auto_select.area_keyword + ']');\n            }\n        }\n    }\n    kktix_area_keyword_ticket_number(settings, area_keyword_array, settings.area_auto_select.mode, settings.ticket_number);\n}\n\nfunction kktix_area_keyword_ticket_number(settings, area_keyword_array, order_mode, ticket_number) {\n    // console.log(area_keyword_array);\n    let target_area = null;\n    let matched_block = [];\n    let query_string = \"div.ticket-unit\";\n    if (area_keyword_array.length) {\n        for (let i = 0; i < area_keyword_array.length; i++) {\n            const current_keyword = area_keyword_array[i].toLowerCase().replace(/,/g, \"\");\n            let matched_block = [];\n\n            $(query_string).each(function() {\n                let html_text = $(this).text().toLowerCase().toLowerCase().replace(/,/g, \"\");\n                let keyword_control_symbol = false;\n                // AND logic\n                if (current_keyword.indexOf(\" \") > 0) {\n                    keyword_control_symbol = true;\n                    const keyword_array = current_keyword.split(\" \");\n                    let contain = true;\n                    for (var j = 0; j < keyword_array.length; j++) {\n                        if (keyword_array[j] == \"\") continue;\n                        if (html_text.indexOf(keyword_array[j]) == -1) {\n                            contain = false;\n                            break;\n                        }\n                    }\n                    if (contain) {\n                        matched_block.push($(this));\n                    }\n                }\n                // OR logic\n                if (current_keyword.indexOf(\"|\") > 0) {\n                    keyword_control_symbol = true;\n                    const regex = new RegExp(current_keyword);\n                    if (regex.test(html_text)) {\n                        matched_block.push($(this));\n                    }\n                }\n                // normal keyword\n                if (!keyword_control_symbol) {\n                    if (html_text.indexOf(current_keyword) > -1) {\n                        matched_block.push($(this));\n                    }\n                }\n            });\n\n            if (matched_block.length) {\n                target_area = get_target_item_with_order(order_mode, matched_block);\n                break;\n            }\n        }\n    } else {\n        $(query_string).each(function() {\n            let input_quantity = $(this).find('input[ng-model=\"ticketModel.quantity\"]');\n            if (input_quantity.length) {\n                matched_block.push($(this));\n            }\n        });\n        if (matched_block.length) {\n            target_area = get_target_item_with_order(order_mode, matched_block);\n        }\n    }\n\n    if (target_area) {\n        let first_node = target_area.find(\":first-child\");\n        let link_id = first_node.attr(\"id\");\n        if (link_id) {\n            let seat_inventory_key = link_id.split(\"_\")[1];\n            //console.log(\"seat_inventory_key:\"+seat_inventory_key);\n\n            if (ticket_number > 0) {\n                let input_quantity = target_area.find('input[ng-model=\"ticketModel.quantity\"]');\n                const input_value = input_quantity.val();\n                const ticket_number_diff = ticket_number - parseInt(input_value);\n                if (input_value < ticket_number) {\n                    let add_button = target_area.find('button[ng-click=\"quantityBtnClick(1)\"]');\n                    for (let i = 0; i < ticket_number_diff; i++) {\n                        if (!add_button.prop(\"disabled\")) {\n                            add_button.click();\n                        }\n                    }\n                }\n\n                let auto_click_next_btn = true;\n                if (auto_click_next_btn) {\n                    // check #1: verification\n                    let is_verification_conditions_popup = false;\n                    let verification_row = $(\"div.control-group > div.controls > label > input[type='text']\");\n                    if (verification_row.length) {\n                        is_verification_conditions_popup = true;\n                    }\n\n                    if (is_verification_conditions_popup) {\n                        auto_click_next_btn = false;\n                        let is_text_sent = kktix_verification_conditions();\n                        if (is_text_sent) {\n                            auto_click_next_btn = true;\n                        }\n                    }\n\n                    // TODO: check #2: member joined radio\n                    // joined_button_css = 'div > div.code-input > div.control-group > div.controls > label[ng-if] > span[ng-if] > a[ng-href=\"#\"]'\n\n                    // check #3: custom_captcha\n                    let is_custom_captcha_popup = false;\n                    let custom_captcha_inner_p = $(\"div.custom-captcha-inner p\");\n                    let custom_captcha_inner_input = $(\"div.custom-captcha-inner input[type='text']\");\n                    if (custom_captcha_inner_p.length && custom_captcha_inner_input.length) {\n                        is_custom_captcha_popup = true;\n                    }\n                    if (is_custom_captcha_popup) {\n                        auto_click_next_btn = false;\n                        let is_text_sent = kktix_custom_captcha_answer();\n                        if (is_text_sent) {\n                            auto_click_next_btn = true;\n                        }\n                    }\n                }\n\n                if (auto_click_next_btn) {\n                    let $next_btn = $('div.register-new-next-button-area > button');\n                    if ($next_btn) {\n                        let selector = 'div.register-new-next-button-area > button';\n                        if ($next_btn.length > 1) {\n                            selector = 'div.register-new-next-button-area > button:last-child'\n                            //$next_btn.last().click();\n                        } else {\n                            //$next_btn.click();\n                        }\n                        if (!$(selector).prop(\"disabled\")) {\n                            webdriver_click(settings, selector);\n                            if (assignInterval) clearInterval(assignInterval);\n                        }\n                    }\n                }\n            }\n        }\n    } else {\n        console.log(\"not target_area found.\");\n        if ($(\".ticket-list-header\").length && $(\".ticket-list\").length) {\n            if ($(\"div.ticket-unit input[type='text']\").length == 0) {\n                console.log(\"start to reload.\");\n                if (assignInterval) clearInterval(assignInterval);\n                if (reload_interval > 100) {\n                    setTimeout(() => {\n                        location.reload();\n                    }, reload_interval);\n                } else {\n                    location.reload();\n                }\n            }\n        }\n    }\n}\n\nfunction checkall() {\n    $('input[type=checkbox]:not(:checked)').each(function() {\n        $(this).click();\n    });\n}\n\nconsole.log('start assign');\n\nvar settings;\nchrome.storage.local.get('settings', function(items) {\n    if (items.settings) {\n        settings = items.settings;\n    }\n});\n\nvar assignInterval = setInterval(() => {\n    chrome.storage.local.get('status', function(items) {\n        if (items.status && items.status == 'ON') {\n            if (settings) {\n                checkall();\n                kktix_ticket_unit_clean_exclude(exclude_keyword_array)\n                kktix_area_keyword_ticket_number(settings, area_keyword_array, order_mode, ticket_number);\n            }\n        } else {\n            //console.log('ddddext status is not OFF');\n        }\n    });\n}, 100);",
+            "run_at": "document_end",
+            "world": "ISOLATED"
+        }
+    ],
+    "cookie": [
+        {
+            "enable": true,
+            "domain": "",
+            "key": "",
+            "value": "",
+            "path": "/",
+            "http_only": true,
+            "secure": true
+        }
+    ],
+    "checkall": [
+        {
+            "enable": true,
+            "url": ""
+        }
+    ]
+}
